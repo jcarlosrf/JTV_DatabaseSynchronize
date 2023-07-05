@@ -2,23 +2,17 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Scire.JTV.SynchronizeDB.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="CriptSource" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="CriptTarget" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ConnectionTarget" Type="System.String" Scope="Application">
+    <Setting Name="ConnectionTarget" Type="System.String" Scope="User">
       <Value Profile="(Default)">server=177.53.143.203;port=3306;database=chronosbi_financeiro;user id=chronosbi_financeiro;password=vv!0^f03JXtP</Value>
     </Setting>
-    <Setting Name="CodigoCliente" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="TempoMinutos" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="ConnectionSource" Type="System.String" Scope="Application">
+    <Setting Name="ConnectionSource" Type="System.String" Scope="User">
       <Value Profile="(Default)">User=SYSDBA;Password=masterkey;Database=E:\Projetos\Workana\DadosMC\DadosMC.fdb;DataSource=localhost;Port=3050</Value>
+    </Setting>
+    <Setting Name="CodigoCliente" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="TempoMinutos" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

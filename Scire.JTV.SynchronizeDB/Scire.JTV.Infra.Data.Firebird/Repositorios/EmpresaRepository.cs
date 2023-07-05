@@ -21,7 +21,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT CODIGO_EMP,    NOME_EMP,    PESSOA_EMP,    DATA_EMP, " +
+                string query = "SELECT CODIGO_EMP,    NOME_EMP,    PESSOA_EMP,    DATA_EMP " +
                     "FROM empresa";
 
                 using (FbCommand command = new FbCommand(query, connection))

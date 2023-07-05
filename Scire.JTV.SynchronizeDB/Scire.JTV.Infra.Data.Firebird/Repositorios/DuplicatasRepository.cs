@@ -71,7 +71,7 @@ namespace Scire.JTV.Infra.Data.Firebird
                     {
                         while (reader.Read())
                         {
-                            DuplicataBaixas duplicata = ReadDuplicatasBaixasFromDataReader(reader, codigoCliente);
+                            DuplicataBaixas duplicata = ReadDuplicataBaixasFromDataReader(reader, codigoCliente);
                             duplicatas.Add(duplicata);
                         }
                     }

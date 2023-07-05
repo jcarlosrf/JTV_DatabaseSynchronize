@@ -20,19 +20,38 @@ namespace Scire.JTV.SynchronizeDB
         private string FireConnection { get; set; }
         private int TempoMinutos { get; set; }
 
+        public string Mensa1 { get; set; }
+        public string Mensa2 { get; set; }
+        public string Mensa3 { get; set; }
+
+        private Timer timer1;
+        private Timer timer2;
 
         public frmMain()
         {
-            InitializeComponent();           
+            InitializeComponent();
+            
+            InitializeComponent();
+            timer1 = new Timer();
+            timer1.Interval = 1000; // Intervalo de 1 segundo
+            timer1.Enabled = false;
+            timer1.Tick += Timer1_Tick;
+            
+            timer2 = new Timer();
+            timer2.Interval = 1000; // Intervalo de 1 segundo
+            timer2.Enabled = true;
+            timer2.Tick += Timer2_Tick;  
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            timer2.Start();
+
+            
             CodigoCliente = Properties.Settings.Default.CodigoCliente;
             MyConnection = Properties.Settings.Default.ConnectionTarget;
             FireConnection = Properties.Settings.Default.ConnectionSource;
             TempoMinutos = Properties.Settings.Default.TempoMinutos;
-
 
             servPessoa = new PessoaService(FireConnection, MyConnection);
             servConfiguracoes = new ConfiguracoesService(FireConnection, MyConnection);
@@ -41,15 +60,36 @@ namespace Scire.JTV.SynchronizeDB
 
             Testarconexoes();
         }
-        
-        private void timer1_Tick(object sender, EventArgs e)
+
+        private async void Timer2_Tick(object sender, EventArgs e)
         {
-            this.Update();
-            if (MyTestConnection && FireTestConnection)
+            await Task.Run(() =>
             {
-                timer1.Enabled = false;
-                ChamadasServicos();
-            }
+                Application.DoEvents();
+                
+            });
+            Invoke(new Action(() => { this.Update(); }));
+        }
+               
+        
+        private async void Timer1_Tick(object sender, EventArgs e)
+        {
+            if (this.CodigoCliente <= 0)
+                MessageBox.Show("Cliente não configurado. Verfique!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            if (this.TempoMinutos <= 0)
+                MessageBox.Show("Configuração inválida. Verfique!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            await Task.Run(() =>
+            {
+                if (MyTestConnection && FireTestConnection)
+                {
+                    timer1.Enabled = false;
+                    ChamadasServicos();
+                }              
+            });
+           
+            Invoke(new Action(() => { this.Update(); }));
         }
 
         private async void ChamadasServicos()
@@ -71,13 +111,17 @@ namespace Scire.JTV.SynchronizeDB
                 Application.DoEvents();
                 await Task.WhenAll(pessoasTask, chequesTask, duplicatasTask);
                 
-                dhagora = new DateTime(1980, 1, 1);
+                //dhagora = new DateTime(1980, 1, 1);
                 servConfiguracoes.UpdateDhAlteracao(CodigoCliente, dhagora);
 
             }
             catch (Exception ex)
             {
-                lblErro.Text = ex.Message;
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+
+                }));
             }
             finally
             {
@@ -91,8 +135,15 @@ namespace Scire.JTV.SynchronizeDB
         {
             try
             {
-                lblPessoas.Text = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
-                
+                Mensa1 = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+
+                Invoke(new Action(() => {
+                    lblPessoas.Text = Mensa1;
+                    pictureBox1.Visible = true;
+                    this.Update();
+                    Application.DoEvents();
+                }));
+
                 Task<int> pessoasTask = servPessoa.ImportarPessoas(dhAlteracao, dhAtual, CodigoCliente);
 
                 Task<int> pessoasClientesTask = servPessoa.ImportarPessoasClientes(dhAlteracao, dhAtual, CodigoCliente);
@@ -110,26 +161,37 @@ namespace Scire.JTV.SynchronizeDB
                 Application.DoEvents();
                 await Task.WhenAll(pessoasTask, pessoasClientesTask, pessoasFisicasTask
                     , pessoasJuridicasTask, pessoasReferenciasTask, pessoasTelefonesTask, empresasTask);
-                
-                int resultado1= pessoasTask.Result; 
-                int resultado2 = pessoasClientesTask.Result; 
+
+                int resultado1 = pessoasTask.Result;
+                int resultado2 = pessoasClientesTask.Result;
                 int resultado3 = pessoasFisicasTask.Result;
                 int resultado4 = pessoasJuridicasTask.Result;
                 int resultado5 = pessoasReferenciasTask.Result;
                 int resultado6 = pessoasTelefonesTask.Result;
                 int resultado7 = empresasTask.Result;
 
-                // Agora você pode usar os resultados como necessário
-                lblPessoas.Text += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: " 
-                    + (resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6 + resultado7).ToString();
+                Mensa1 += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: "
+                                + (resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6 ).ToString();
 
+                Invoke(new Action(() =>
+                {
+                    lblPessoas.Text = Mensa1;
+                    this.Update();
+                    Application.DoEvents();
+                }));
             }
             catch (Exception ex)
             {
-                lblErro.Text = ex.Message;
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+                }));
             }
             finally
             {
+                Invoke(new Action(() => {
+                    pictureBox1.Visible = false;
+                }));
                 Application.DoEvents();
             }
         }
@@ -138,7 +200,14 @@ namespace Scire.JTV.SynchronizeDB
         {
             try
             {
-                lblCheques.Text = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+                Mensa2 = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+                Invoke(new Action(() =>
+                {
+                    lblCheques.Text = Mensa2;
+                    pictureBox2.Visible = true;
+                    this.Update();
+                    Application.DoEvents();
+                }));
 
                 Task<int> chequesTask = servCheque.ImportarCheques(dhAlteracao, dhAtual, CodigoCliente);
 
@@ -153,17 +222,28 @@ namespace Scire.JTV.SynchronizeDB
                 int resultado2 = chequesbaixasTask.Result;
                 int resultado3 = chequesdevolvidosTask.Result;
 
-                // Agora você pode usar os resultados como necessário
-                lblCheques.Text += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: "
-                    + (resultado1 + resultado2 + resultado3).ToString();
+                Mensa2 += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: "
+                        + (resultado1 + resultado2 + resultado3).ToString();
+                Invoke(new Action(() =>
+                {
+                    lblCheques.Text = Mensa2;
+                }));
+                
 
             }
             catch (Exception ex)
             {
-                lblErro.Text = ex.Message;
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+
+                }));
             }
             finally
             {
+                Invoke(new Action(() => {
+                    pictureBox2.Visible = false;
+                }));
                 Application.DoEvents();
             }
         }
@@ -172,7 +252,12 @@ namespace Scire.JTV.SynchronizeDB
         {
             try
             {
-                lblDuplicatas.Text = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+                Mensa3 = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+                Invoke(new Action(() =>
+                {
+                    lblDuplicatas.Text = Mensa3;
+                    pictureBox3.Visible = true;
+                }));
 
                 Task<int> duplicataTask = servDuplicata.ImportarDuplicatas(dhAlteracao, dhAtual, CodigoCliente);
 
@@ -184,29 +269,53 @@ namespace Scire.JTV.SynchronizeDB
 
                 int resultado1 = duplicataTask.Result;
                 int resultado2 = duplicatabaixasTask.Result;
-
-                // Agora você pode usar os resultados como necessário
-                lblDuplicatas.Text += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: "
-                    + (resultado1 + resultado2).ToString();
+                Mensa3 += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: "
+                   + (resultado1 + resultado2).ToString();
+                Invoke(new Action(() =>
+                {
+                    lblDuplicatas.Text = Mensa3;
+                }));
+               
 
             }
             catch (Exception ex)
             {
-                lblErro.Text = ex.Message;
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+
+                }));
             }
             finally
             {
+                Invoke(new Action(() => {
+                    pictureBox3.Visible = false;
+                }));
                 Application.DoEvents();
             }
         }
 
         private void Testarconexoes()
         {
+            CodigoCliente = Properties.Settings.Default.CodigoCliente;
+            MyConnection = Properties.Settings.Default.ConnectionTarget;
+            FireConnection = Properties.Settings.Default.ConnectionSource;
+            TempoMinutos = Properties.Settings.Default.TempoMinutos;
+
             Application.DoEvents();
             PessoaService servPessoa = new PessoaService(FireConnection, MyConnection);
 
-            FireTestConnection = servPessoa.TestarFire();
-            MyTestConnection = servPessoa.TestarMy();
+            if (this.CodigoCliente <= 0 || this.TempoMinutos <= 0)
+            {
+                lblErro.Text = "Configuração inválida. Verfique!";
+                FireTestConnection = false;
+                MyTestConnection = false;                
+            }
+            else
+            {
+                FireTestConnection = servPessoa.TestarFire();
+                MyTestConnection = servPessoa.TestarMy();
+            }
 
             if (FireTestConnection)
             {
@@ -237,8 +346,6 @@ namespace Scire.JTV.SynchronizeDB
                 errorProvider1.SetError(label4, "Verificar");
             }
 
-            // timer1.Interval = Properties.Settings.Default.TempoMinutos * 60 * 1000;
-
             if (FireTestConnection && MyTestConnection)
             {
                 timer1.Enabled = true;
@@ -252,6 +359,32 @@ namespace Scire.JTV.SynchronizeDB
         }
 
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            frmConfiguracoes configuracoesForm = new frmConfiguracoes();
+
+            configuracoesForm.TempoMinutos = this.TempoMinutos;
+            configuracoesForm.CodigoCliente = this.CodigoCliente;
+            configuracoesForm.MyConnection = this.MyConnection;
+            configuracoesForm.FireConnection = this.FireConnection;
+
+            configuracoesForm.MyConnection = this.FireConnection; 
+            configuracoesForm.FireConnection = this.MyConnection;
+
+            // Exibe o formulário como um diálogo e aguarda até que ele seja fechado
+            DialogResult result = configuracoesForm.ShowDialog();
+
+            // Verifica se o formulário foi fechado pelo botão "Salvar" (ou qualquer outro critério desejado)
+            if (result == DialogResult.OK)
+            {
+                Testarconexoes();
+
+                servPessoa = new PessoaService(FireConnection, MyConnection);
+                servConfiguracoes = new ConfiguracoesService(FireConnection, MyConnection);
+                servCheque = new ChequesService(FireConnection, MyConnection);
+                servDuplicata = new DuplicatasService(FireConnection, MyConnection);
+            }
+        }
     }
 
 }

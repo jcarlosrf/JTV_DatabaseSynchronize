@@ -46,7 +46,7 @@ namespace Scire.JTV.Infra.Data.MySql
         public int SavePessoaTelefone(PessoaTelefone pessoaTelefone, bool save)
         {
 
-            var existingPessoaReferencia = _context.PessoasReferencias.FirstOrDefault(pj => pj.CodigoCliente == pessoaTelefone.CodigoCliente && pj.AutoInc == pessoaTelefone.AutoInc);
+            var existingPessoaReferencia = _context.PessoasTelefones.FirstOrDefault(pj => pj.CodigoCliente == pessoaTelefone.CodigoCliente && pj.AutoInc == pessoaTelefone.AutoInc);
 
             if (existingPessoaReferencia == null)
             {

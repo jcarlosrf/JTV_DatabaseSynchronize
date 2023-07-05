@@ -23,25 +23,7 @@ namespace Scire.JTV.SynchronizeDB.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool CriptSource {
-            get {
-                return ((bool)(this["CriptSource"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool CriptTarget {
-            get {
-                return ((bool)(this["CriptTarget"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("server=177.53.143.203;port=3306;database=chronosbi_financeiro;user id=chronosbi_f" +
             "inanceiro;password=vv!0^f03JXtP")]
@@ -49,33 +31,45 @@ namespace Scire.JTV.SynchronizeDB.Properties {
             get {
                 return ((string)(this["ConnectionTarget"]));
             }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int CodigoCliente {
-            get {
-                return ((int)(this["CodigoCliente"]));
+            set {
+                this["ConnectionTarget"] = value;
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int TempoMinutos {
-            get {
-                return ((int)(this["TempoMinutos"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("User=SYSDBA;Password=masterkey;Database=E:\\Projetos\\Workana\\DadosMC\\DadosMC.fdb;D" +
             "ataSource=localhost;Port=3050")]
         public string ConnectionSource {
             get {
                 return ((string)(this["ConnectionSource"]));
+            }
+            set {
+                this["ConnectionSource"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int CodigoCliente {
+            get {
+                return ((int)(this["CodigoCliente"]));
+            }
+            set {
+                this["CodigoCliente"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TempoMinutos {
+            get {
+                return ((int)(this["TempoMinutos"]));
+            }
+            set {
+                this["TempoMinutos"] = value;
             }
         }
     }
