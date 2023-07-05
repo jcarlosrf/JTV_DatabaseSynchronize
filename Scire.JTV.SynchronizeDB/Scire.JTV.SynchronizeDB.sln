@@ -5,6 +5,23 @@ VisualStudioVersion = 15.0.33403.129
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scire.JTV.SynchronizeDB", "Scire.JTV.SynchronizeDB\Scire.JTV.SynchronizeDB.csproj", "{ECB54652-9869-49B7-9252-F3E00E590226}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 Presentation", "1 Presentation", "{F1DDB672-02F8-45B5-A618-F788DE6F7A23}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 Domain", "2 Domain", "{34B35B7D-FFD1-4407-ACFC-3B23EAEEF525}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Infra", "3 Infra", "{907FE6A3-4367-4DB2-A9A2-8C19B089A967}"
+	ProjectSection(SolutionItems) = preProject
+		Scire.JTV.Infra.Data.MySql\Repositorios\AbstractRepository.cs = Scire.JTV.Infra.Data.MySql\Repositorios\AbstractRepository.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scire.JTV.Infra.Data.Firebird", "Scire.JTV.Infra.Data.Firebird\Scire.JTV.Infra.Data.Firebird.csproj", "{521CEF8B-9871-4290-B6DF-596AAD85C19A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scire.JTV.Domain", "Scire.JTV.Domain\Scire.JTV.Domain.csproj", "{68820438-1FA1-44B0-8459-24F58BCE5D63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scire.JTV.Infra.Data.MySql", "Scire.JTV.Infra.Data.MySql\Scire.JTV.Infra.Data.MySql.csproj", "{D9028DF6-9027-4708-A70C-37828249BEC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scire.JTV.Domain.Services", "Scire.JTV.Domain.Services\Scire.JTV.Domain.Services.csproj", "{C4F390FC-6095-4963-9F8F-FEC3B77E034D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +32,32 @@ Global
 		{ECB54652-9869-49B7-9252-F3E00E590226}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECB54652-9869-49B7-9252-F3E00E590226}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECB54652-9869-49B7-9252-F3E00E590226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{521CEF8B-9871-4290-B6DF-596AAD85C19A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{521CEF8B-9871-4290-B6DF-596AAD85C19A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{521CEF8B-9871-4290-B6DF-596AAD85C19A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{521CEF8B-9871-4290-B6DF-596AAD85C19A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68820438-1FA1-44B0-8459-24F58BCE5D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68820438-1FA1-44B0-8459-24F58BCE5D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68820438-1FA1-44B0-8459-24F58BCE5D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68820438-1FA1-44B0-8459-24F58BCE5D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9028DF6-9027-4708-A70C-37828249BEC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9028DF6-9027-4708-A70C-37828249BEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9028DF6-9027-4708-A70C-37828249BEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9028DF6-9027-4708-A70C-37828249BEC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4F390FC-6095-4963-9F8F-FEC3B77E034D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4F390FC-6095-4963-9F8F-FEC3B77E034D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4F390FC-6095-4963-9F8F-FEC3B77E034D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4F390FC-6095-4963-9F8F-FEC3B77E034D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ECB54652-9869-49B7-9252-F3E00E590226} = {F1DDB672-02F8-45B5-A618-F788DE6F7A23}
+		{521CEF8B-9871-4290-B6DF-596AAD85C19A} = {907FE6A3-4367-4DB2-A9A2-8C19B089A967}
+		{68820438-1FA1-44B0-8459-24F58BCE5D63} = {34B35B7D-FFD1-4407-ACFC-3B23EAEEF525}
+		{D9028DF6-9027-4708-A70C-37828249BEC6} = {907FE6A3-4367-4DB2-A9A2-8C19B089A967}
+		{C4F390FC-6095-4963-9F8F-FEC3B77E034D} = {34B35B7D-FFD1-4407-ACFC-3B23EAEEF525}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB7D0B6D-E071-4212-9B9B-EC0AB004F5A1}

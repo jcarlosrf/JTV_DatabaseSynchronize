@@ -1,0 +1,30 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Scire.JTV.Infra.Data.MySql.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TargetConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;server=177.53.143.203;user id=chronosbi_financeiro;password=vv!0^f03JXtP;database=chronosbi_financeiro;persistsecurityinfo=True&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;MySql.Data.MySqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">server=177.53.143.203;user id=chronosbi_financeiro;password=vv!0^f03JXtP;database=chronosbi_financeiro;persistsecurityinfo=True</Value>
+    </Setting>
+    <Setting Name="MySQLConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;server=177.53.143.203;user id=chronosbi_financeiro;database=chronosbi_financeiro;password=vv!0^f03JXtP;persistsecurityinfo=True&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;MySql.Data.MySqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">server=177.53.143.203;user id=chronosbi_financeiro;database=chronosbi_financeiro;password=vv!0^f03JXtP;persistsecurityinfo=True</Value>
+    </Setting>
+    <Setting Name="chronosbi_financeiroConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;server=177.53.143.203;user id=chronosbi_financeiro;database=chronosbi_financeiro;persistsecurityinfo=True;password=vv!0^f03JXtP&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;MySql.Data.MySqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">server=177.53.143.203;user id=chronosbi_financeiro;database=chronosbi_financeiro;persistsecurityinfo=True;password=vv!0^f03JXtP</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
