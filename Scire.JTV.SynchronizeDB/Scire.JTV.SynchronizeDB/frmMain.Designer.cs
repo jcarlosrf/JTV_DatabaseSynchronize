@@ -38,6 +38,10 @@
             this.lblPessoas = new System.Windows.Forms.Label();
             this.lblErro = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lblCheques = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.lblDuplicatas = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -113,15 +117,57 @@
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(23, 96);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(249, 15);
+            this.label6.Size = new System.Drawing.Size(215, 15);
             this.label6.TabIndex = 6;
-            this.label6.Text = "Tarefa 01 - Pessoas, PessoasClientes";
+            this.label6.Text = "Tarefa 01 - Pessoas e Empresas";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(23, 162);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(137, 15);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Tarefa 02 - Cheques";
+            // 
+            // lblCheques
+            // 
+            this.lblCheques.AutoSize = true;
+            this.lblCheques.Location = new System.Drawing.Point(23, 187);
+            this.lblCheques.Name = "lblCheques";
+            this.lblCheques.Size = new System.Drawing.Size(148, 13);
+            this.lblCheques.TabIndex = 7;
+            this.lblCheques.Text = "Início: [] - Fim: [] - Registros: []";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(23, 227);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(149, 15);
+            this.label8.TabIndex = 10;
+            this.label8.Text = "Tarefa 03 - Duplicatas";
+            // 
+            // lblDuplicatas
+            // 
+            this.lblDuplicatas.AutoSize = true;
+            this.lblDuplicatas.Location = new System.Drawing.Point(23, 252);
+            this.lblDuplicatas.Name = "lblDuplicatas";
+            this.lblDuplicatas.Size = new System.Drawing.Size(148, 13);
+            this.lblDuplicatas.TabIndex = 9;
+            this.lblDuplicatas.Text = "Início: [] - Fim: [] - Registros: []";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(587, 354);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.lblDuplicatas);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lblCheques);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.lblErro);
             this.Controls.Add(this.lblPessoas);
@@ -150,6 +196,10 @@
         private System.Windows.Forms.Label lblPessoas;
         private System.Windows.Forms.Label lblErro;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label lblDuplicatas;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblCheques;
     }
 }
 

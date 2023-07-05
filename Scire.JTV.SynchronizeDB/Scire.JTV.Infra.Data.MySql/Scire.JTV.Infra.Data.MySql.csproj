@@ -83,12 +83,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Repositorios\AbstractRepository.cs" />
-    <Compile Include="Repositorios\EmpresaImportacaoRepository.cs" />
-    <Compile Include="Repositorios\PessoaClienteRepository.cs" />
-    <Compile Include="Repositorios\PessoaFisicaRepository.cs" />
-    <Compile Include="Repositorios\PessoaJuricaRepository.cs" />
-    <Compile Include="Repositorios\PessoaReferenciaRepository.cs" />
-    <Compile Include="Repositorios\PessoaRepository.cs" />
+    <Compile Include="Repositorios\Cheques\ChequeDevolvidoRepository.cs" />
+    <Compile Include="Repositorios\Cheques\ChequesBaixasRepository.cs" />
+    <Compile Include="Repositorios\Cheques\ChequesRepository.cs" />
+    <Compile Include="Repositorios\Duplicatas\DuplicataBaixaRepository.cs" />
+    <Compile Include="Repositorios\Duplicatas\DuplicatasRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\EmpresaImportacaoRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\EmpresaRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\PessoaClienteRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\PessoaFisicaRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\PessoaJuricaRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\PessoaReferenciaRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\PessoaRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -96,7 +102,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Contexto\ScireDbContext.cs" />
-    <Compile Include="Repositorios\PessoaTelefoneRepository.cs" />
+    <Compile Include="Repositorios\Pessoas\PessoaTelefoneRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

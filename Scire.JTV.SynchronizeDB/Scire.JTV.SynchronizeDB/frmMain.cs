@@ -11,6 +11,8 @@ namespace Scire.JTV.SynchronizeDB
         private bool MyTestConnection { get; set; }
         private bool FireTestConnection { get; set; }
         PessoaService servPessoa;
+        ChequesService servCheque;
+        DuplicatasService servDuplicata;
         ConfiguracoesService servConfiguracoes;
 
         private int CodigoCliente { get; set; }
@@ -34,6 +36,8 @@ namespace Scire.JTV.SynchronizeDB
 
             servPessoa = new PessoaService(FireConnection, MyConnection);
             servConfiguracoes = new ConfiguracoesService(FireConnection, MyConnection);
+            servCheque = new ChequesService(FireConnection, MyConnection);
+            servDuplicata = new DuplicatasService(FireConnection, MyConnection);
 
             Testarconexoes();
         }
@@ -60,12 +64,14 @@ namespace Scire.JTV.SynchronizeDB
                 DateTime dhalteracao = configuracoes.DataHoraImportacao.Value;
                 DateTime dhagora = DateTime.Now.AddMinutes(-10);
 
-                Task pessoas = ChamadasServicosPessoas(dhalteracao, dhagora);
+                Task pessoasTask = ChamadasServicosPessoas(dhalteracao, dhagora);
+                Task chequesTask = ChamadasServicosCheques(dhalteracao, dhagora);
+                Task duplicatasTask = ChamadasServicosDuplicadas(dhalteracao, dhagora);
 
                 Application.DoEvents();
-                await Task.WhenAll(pessoas);
+                await Task.WhenAll(pessoasTask, chequesTask, duplicatasTask);
                 
-                //dhagora = new DateTime(1980, 1, 1);
+                dhagora = new DateTime(1980, 1, 1);
                 servConfiguracoes.UpdateDhAlteracao(CodigoCliente, dhagora);
 
             }
@@ -85,7 +91,7 @@ namespace Scire.JTV.SynchronizeDB
         {
             try
             {
-                lblPessoas.Text = "Pessoas - Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+                lblPessoas.Text = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
                 
                 Task<int> pessoasTask = servPessoa.ImportarPessoas(dhAlteracao, dhAtual, CodigoCliente);
 
@@ -99,9 +105,11 @@ namespace Scire.JTV.SynchronizeDB
 
                 Task<int> pessoasTelefonesTask = servPessoa.ImportarPessoasTelefones(dhAlteracao, dhAtual, CodigoCliente);
 
+                Task<int> empresasTask = servPessoa.ImportarEmpresas(CodigoCliente);
 
                 Application.DoEvents();
-                await Task.WhenAll(pessoasTask, pessoasClientesTask, pessoasFisicasTask);
+                await Task.WhenAll(pessoasTask, pessoasClientesTask, pessoasFisicasTask
+                    , pessoasJuridicasTask, pessoasReferenciasTask, pessoasTelefonesTask, empresasTask);
                 
                 int resultado1= pessoasTask.Result; 
                 int resultado2 = pessoasClientesTask.Result; 
@@ -109,10 +117,77 @@ namespace Scire.JTV.SynchronizeDB
                 int resultado4 = pessoasJuridicasTask.Result;
                 int resultado5 = pessoasReferenciasTask.Result;
                 int resultado6 = pessoasTelefonesTask.Result;
+                int resultado7 = empresasTask.Result;
 
                 // Agora você pode usar os resultados como necessário
                 lblPessoas.Text += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: " 
-                    + (resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6).ToString();
+                    + (resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6 + resultado7).ToString();
+
+            }
+            catch (Exception ex)
+            {
+                lblErro.Text = ex.Message;
+            }
+            finally
+            {
+                Application.DoEvents();
+            }
+        }
+
+        private async Task ChamadasServicosCheques(DateTime dhAlteracao, DateTime dhAtual)
+        {
+            try
+            {
+                lblCheques.Text = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+
+                Task<int> chequesTask = servCheque.ImportarCheques(dhAlteracao, dhAtual, CodigoCliente);
+
+                Task<int> chequesbaixasTask = servCheque.ImportarChequesBaixas(dhAlteracao, dhAtual, CodigoCliente);
+
+                Task<int> chequesdevolvidosTask = servCheque.ImportarChequesDevolvidos(dhAlteracao, dhAtual, CodigoCliente);
+
+                Application.DoEvents();
+                await Task.WhenAll(chequesTask, chequesbaixasTask, chequesdevolvidosTask);
+
+                int resultado1 = chequesTask.Result;
+                int resultado2 = chequesbaixasTask.Result;
+                int resultado3 = chequesdevolvidosTask.Result;
+
+                // Agora você pode usar os resultados como necessário
+                lblCheques.Text += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: "
+                    + (resultado1 + resultado2 + resultado3).ToString();
+
+            }
+            catch (Exception ex)
+            {
+                lblErro.Text = ex.Message;
+            }
+            finally
+            {
+                Application.DoEvents();
+            }
+        }
+
+        private async Task ChamadasServicosDuplicadas(DateTime dhAlteracao, DateTime dhAtual)
+        {
+            try
+            {
+                lblDuplicatas.Text = "Inicio: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss");
+
+                Task<int> duplicataTask = servDuplicata.ImportarDuplicatas(dhAlteracao, dhAtual, CodigoCliente);
+
+                Task<int> duplicatabaixasTask = servDuplicata.ImportarDuplicatasBaixas(dhAlteracao, dhAtual, CodigoCliente);
+
+
+                Application.DoEvents();
+                await Task.WhenAll(duplicataTask, duplicatabaixasTask);
+
+                int resultado1 = duplicataTask.Result;
+                int resultado2 = duplicatabaixasTask.Result;
+
+                // Agora você pode usar os resultados como necessário
+                lblDuplicatas.Text += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: "
+                    + (resultado1 + resultado2).ToString();
 
             }
             catch (Exception ex)

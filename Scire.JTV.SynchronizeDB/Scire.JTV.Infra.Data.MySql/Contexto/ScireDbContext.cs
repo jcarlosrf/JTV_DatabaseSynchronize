@@ -33,6 +33,12 @@ namespace Scire.JTV.Infra.Data.MySql
         public DbSet<PessoaJuridica> PessoasJuridicas { get; set; }
         public DbSet<PessoaReferencia> PessoasReferencias { get; set; }
         public DbSet<PessoaTelefone> PessoasTelefones { get; set; }
+        public DbSet<Empresa> Empresas{ get; set; }
+        public DbSet<Cheque> Cheques { get; set; }
+        public DbSet<ChequeDevolvido> ChequesDevolvidos { get; set; }
+        public DbSet<ChequeBaixas> ChequesBaixas { get; set; }
+        public DbSet<Duplicata> Duplicatas { get; set; }
+        public DbSet<DuplicataBaixas> DuplicatasBaixas { get; set; }
 
     }
 }

@@ -67,13 +67,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\EmpresaImportacao.cs" />
-    <Compile Include="Entities\Pessoa.cs" />
-    <Compile Include="Entities\PessoaCliente.cs" />
-    <Compile Include="Entities\PessoaFisica.cs" />
-    <Compile Include="Entities\PessoaJuridica.cs" />
-    <Compile Include="Entities\PessoaReferencia.cs" />
-    <Compile Include="Entities\PessoaTelefone.cs" />
+    <Compile Include="Entities\Cheques\ChequeDevolvido.cs" />
+    <Compile Include="Entities\Cheques\Cheques.cs" />
+    <Compile Include="Entities\Cheques\ChequesBaixas.cs" />
+    <Compile Include="Entities\Duplicatas\Duplicata.cs" />
+    <Compile Include="Entities\Duplicatas\DuplicataBaixas.cs" />
+    <Compile Include="Entities\Pessoas\Empresa.cs" />
+    <Compile Include="Entities\Pessoas\EmpresaImportacao.cs" />
+    <Compile Include="Entities\Pessoas\Pessoa.cs" />
+    <Compile Include="Entities\Pessoas\PessoaCliente.cs" />
+    <Compile Include="Entities\Pessoas\PessoaFisica.cs" />
+    <Compile Include="Entities\Pessoas\PessoaJuridica.cs" />
+    <Compile Include="Entities\Pessoas\PessoaReferencia.cs" />
+    <Compile Include="Entities\Pessoas\PessoaTelefone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -85,8 +91,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

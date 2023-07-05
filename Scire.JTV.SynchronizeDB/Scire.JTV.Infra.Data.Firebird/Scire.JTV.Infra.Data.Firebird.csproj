@@ -52,8 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PessoaRepository.cs" />
-    <Compile Include="FirebirdContext.cs" />
+    <Compile Include="Repositorios\ChequesRepository.cs" />
+    <Compile Include="Repositorios\DuplicatasRepository.cs" />
+    <Compile Include="Repositorios\EmpresaRepository.cs" />
+    <Compile Include="Repositorios\PessoaRepository.cs" />
+    <Compile Include="Contexto\FirebirdContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

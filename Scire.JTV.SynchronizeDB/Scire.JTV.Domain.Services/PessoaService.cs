@@ -80,8 +80,7 @@ namespace Scire.JTV.Domain.Services
 
             return 0;
         }
-
-
+        
         public async Task<int> ImportarPessoasTelefones(DateTime dhAlteracao, DateTime dhAgora, int codigoCliente)
         {
             var pessoaFire = new Infra.Data.Firebird.PessoaRepository(FireString);
@@ -91,6 +90,19 @@ namespace Scire.JTV.Domain.Services
 
             if (pessoasFire.Count > 0)
                 return pessoaMy.SavePessoas(pessoasFire);
+
+            return 0;
+        }
+
+        public async Task<int> ImportarEmpresas(int codigoCliente)
+        {
+            var pessoaFire = new Infra.Data.Firebird.EmpresaRepository(FireString);
+            var pessoaMy = new Infra.Data.MySql.EmpresaRepository(MyString);
+
+            var pessoasFire = await Task.Run(() => pessoaFire.GetEmpresas(codigoCliente));
+
+            if (pessoasFire.Count > 0)
+                return pessoaMy.SaveEmpresas(pessoasFire);
 
             return 0;
         }
