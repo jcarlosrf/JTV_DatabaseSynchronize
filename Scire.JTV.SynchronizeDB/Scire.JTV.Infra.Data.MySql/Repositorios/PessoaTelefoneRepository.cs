@@ -3,17 +3,18 @@ using System.Linq;
 using MySql.Data.MySqlClient;
 using Scire.JTV.Domain.Entities;
 
+
 namespace Scire.JTV.Infra.Data.MySql
 {
-    public class PessoaReferenciaRepository : AbstractRepository
+    public class PessoaTelefoneRepository : AbstractRepository
     {
-        public PessoaReferenciaRepository(string connecitonString)
+        public PessoaTelefoneRepository(string connecitonString)
         {
             CreateConnection(connecitonString);
         }
 
 
-        public int SavePessoas(List<PessoaReferencia> Pessoas)
+        public int SavePessoas(List<PessoaTelefone> Pessoas)
         {
             int retorno = 0;
 
@@ -25,9 +26,9 @@ namespace Scire.JTV.Infra.Data.MySql
                 {
                     using (_context = new ScireDbContext(connection, false))
                     {
-                        foreach (PessoaReferencia pessoa in Pessoas)
+                        foreach (PessoaTelefone pessoa in Pessoas)
                         {
-                            SavePessoaReferencia(pessoa, false);
+                            SavePessoaTelefone(pessoa, false);
                         }
 
                         retorno = _context.SaveChanges();
@@ -42,19 +43,19 @@ namespace Scire.JTV.Infra.Data.MySql
             return retorno;
         }
 
-        public int SavePessoaReferencia(PessoaReferencia pessoaReferencia, bool save)
+        public int SavePessoaTelefone(PessoaTelefone pessoaTelefone, bool save)
         {
 
-            var existingPessoaReferencia = _context.PessoasReferencias.FirstOrDefault(pj => pj.CodigoCliente == pessoaReferencia.CodigoCliente && pj.AutoInc == pessoaReferencia.AutoInc);
+            var existingPessoaReferencia = _context.PessoasReferencias.FirstOrDefault(pj => pj.CodigoCliente == pessoaTelefone.CodigoCliente && pj.AutoInc == pessoaTelefone.AutoInc);
 
             if (existingPessoaReferencia == null)
             {
-                _context.PessoasReferencias.Add(pessoaReferencia);
+                _context.PessoasTelefones.Add(pessoaTelefone);
             }
             else
             {
-                pessoaReferencia.Id = existingPessoaReferencia.Id;
-                _context.Entry(existingPessoaReferencia).CurrentValues.SetValues(pessoaReferencia);
+                pessoaTelefone.Id = existingPessoaReferencia.Id;
+                _context.Entry(existingPessoaReferencia).CurrentValues.SetValues(pessoaTelefone);
             }
 
             if (save)

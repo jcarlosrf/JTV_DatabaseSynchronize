@@ -121,7 +121,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM PESSOA_JURICA " +
+                string query = "SELECT * FROM PESSOA_JURIDICA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_JUR >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_JUR < @DataAgora) ";
 
                 if (dataAtualizacao < new DateTime(2000, 1, 1))
@@ -148,6 +148,75 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             return pessoas;
         }
+
+        public List<PessoaReferencia> GetPessoaReferencia(DateTime dataAtualizacao, DateTime dataAgora, int codigoCliente)
+        {
+            List<PessoaReferencia> pessoas = new List<PessoaReferencia>();
+
+            using (FbConnection connection = new FbConnection(connectionString))
+            {
+                string query = "SELECT * FROM PESSOA_REFERENCIA " +
+                    "WHERE (DATAHORAALTERACAO_PESSOA_REF >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_REF < @DataAgora) ";
+
+                if (dataAtualizacao < new DateTime(2000, 1, 1))
+                    query += "or (DATAHORAALTERACAO_PESSOA_REF  is Null) ";
+
+                query += "order by DATAHORAALTERACAO_PESSOA_REF";
+
+                using (FbCommand command = new FbCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@DataAtualizacao", dataAtualizacao);
+                    command.Parameters.AddWithValue("@DataAgora", dataAgora);
+                    connection.Open();
+
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            PessoaReferencia pessoa = ReadPessoaReferenciaFromDataReader(reader, codigoCliente);
+                            pessoas.Add(pessoa);
+                        }
+                    }
+                }
+            }
+
+            return pessoas;
+        }
+
+        public List<PessoaTelefone> GetPessoaTelefone(DateTime dataAtualizacao, DateTime dataAgora, int codigoCliente)
+        {
+            List<PessoaTelefone> pessoas = new List<PessoaTelefone>();
+
+            using (FbConnection connection = new FbConnection(connectionString))
+            {
+                string query = "SELECT * FROM PESSOA_TELEFONE " +
+                    "WHERE (DATAHORAALTERACAO_PESSOA_TEL >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_TEL < @DataAgora) ";
+
+                if (dataAtualizacao < new DateTime(2000, 1, 1))
+                    query += "or (DATAHORAALTERACAO_PESSOA_TEL  is Null) ";
+
+                query += "order by DATAHORAALTERACAO_PESSOA_TEL";
+
+                using (FbCommand command = new FbCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@DataAtualizacao", dataAtualizacao);
+                    command.Parameters.AddWithValue("@DataAgora", dataAgora);
+                    connection.Open();
+
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            PessoaTelefone pessoa = ReadPessoaTelefoneFromDataReader(reader, codigoCliente);
+                            pessoas.Add(pessoa);
+                        }
+                    }
+                }
+            }
+
+            return pessoas;
+        }
+
 
         private Pessoa ReadPessoaFromDataReader(IDataReader reader, int codigocliente)
         { 
@@ -222,8 +291,8 @@ namespace Scire.JTV.Infra.Data.Firebird
             pessoa.DataAnonimizacaoPessoa = !reader.IsDBNull(reader.GetOrdinal("DATA_ANONIMIZACAO_PESSOA")) ? Convert.ToDateTime(reader["DATA_ANONIMIZACAO_PESSOA"]) : (DateTime?)null;
             pessoa.DataAutAnonimizacaoPessoa = !reader.IsDBNull(reader.GetOrdinal("DATA_AUT_ANONIMIZACAO_PESSOA")) ? Convert.ToDateTime(reader["DATA_AUT_ANONIMIZACAO_PESSOA"]) : (DateTime?)null;
             pessoa.UsuarioAnonimizacaoPessoa = Convert.ToString(reader["USUARIO_ANONIMIZACAO_PESSOA"]);
-            pessoa.DataHoraInclusaoPessoa = Convert.ToDateTime(reader["DATAHORAINCLUSAO_PESSOA"]);
-            pessoa.DataHoraAlteracaoPessoa = Convert.ToDateTime(reader["DATAHORAALTERACAO_PESSOA"]);
+            pessoa.DataHoraInclusaoPessoa = !reader.IsDBNull(reader.GetOrdinal("DATAHORAINCLUSAO_PESSOA")) ? Convert.ToDateTime(reader["DATAHORAINCLUSAO_PESSOA"]) : new DateTime(1900, 1, 1);
+            pessoa.DataHoraAlteracaoPessoa = !reader.IsDBNull(reader.GetOrdinal("DATAHORAALTERACAO_PESSOA")) ? Convert.ToDateTime(reader["DATAHORAALTERACAO_PESSOA"]) : new DateTime(1900, 1, 1);
             pessoa.UsuarioInclusaoPessoa = Convert.ToString(reader["USUARIOINCLUSAO_PESSOA"]);
             pessoa.UsuarioAlteracaoPessoa = Convert.ToString(reader["USUARIOALTERACAO_PESSOA"]);
             pessoa.ProdutorRuralCpfpPessoa = Convert.ToString(reader["PRODUTORRURAL_CPFP_PESSOA"]);
@@ -275,8 +344,8 @@ namespace Scire.JTV.Infra.Data.Firebird
             pessoaCliente.BancoCte = Convert.ToInt32(reader["BANCO_CTE_PESSOA_CLI"]);
             pessoaCliente.SituacaoCte = Convert.ToInt32(reader["SITUACAO_CTE_PESSOA_CLI"]);
             pessoaCliente.ConsultorPadrao = Convert.ToInt32(reader["CONSULTORPADRAO_PESSOA_CLI"]);
-            pessoaCliente.DataHoraInclusao = Convert.ToDateTime(reader["DATAHORAINCLUSAO_PESSOA_CLI"]);
-            pessoaCliente.DataHoraAlteracao = Convert.ToDateTime(reader["DATAHORAALTERACAO_PESSOA_CLI"]);
+            pessoaCliente.DataHoraInclusao = !reader.IsDBNull(reader.GetOrdinal("DATAHORAINCLUSAO_PESSOA_CLI")) ? Convert.ToDateTime(reader["DATAHORAINCLUSAO_PESSOA_CLI"]) : new DateTime(1900, 1, 1);
+            pessoaCliente.DataHoraAlteracao = !reader.IsDBNull(reader.GetOrdinal("DATAHORAALTERACAO_PESSOA_CLI")) ? Convert.ToDateTime(reader["DATAHORAALTERACAO_PESSOA_CLI"]) : new DateTime(1900, 1, 1);
             pessoaCliente.UsuarioInclusao = reader["USUARIOINCLUSAO_PESSOA_CLI"].ToString();
             pessoaCliente.UsuarioAlteracao = reader["USUARIOALTERACAO_PESSOA_CLI"].ToString();
 
@@ -350,6 +419,48 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             return pessoaJuridica;
         }
+
+        private PessoaReferencia ReadPessoaReferenciaFromDataReader(IDataReader reader, int codigoCliente)
+        {
+            PessoaReferencia pessoaReferencia = new PessoaReferencia();
+
+            pessoaReferencia.Id = 0;
+            pessoaReferencia.CodigoCliente = codigoCliente;
+            pessoaReferencia.AutoInc = Convert.ToInt32(reader["AUTOINC_PESSOA_REF"]);
+            pessoaReferencia.PessoaRef = Convert.ToInt32(reader["PESSOA_PESSOA_REF"]);
+            pessoaReferencia.Referencia = reader["REFERENCIA_PESSOA_REF"].ToString();
+            pessoaReferencia.TipoReferencia = Convert.ToInt32(reader["TIPOREFERENCIA_PESSOA_REF"]);
+            pessoaReferencia.Telefone = reader["TELEFONE_PESSOA_REF"].ToString();
+            pessoaReferencia.Observacao = reader["OBSERVACAO_PESSOA_REF"].ToString();
+            pessoaReferencia.UsuarioInclusao = reader["USUARIOINCLUSAO_PESSOA_REF"].ToString();
+            pessoaReferencia.UsuarioAlteracao = reader["USUARIOALTERACAO_PESSOA_REF"].ToString();
+            pessoaReferencia.DataHoraInclusao = !reader.IsDBNull(reader.GetOrdinal("DATAHORAINCLUSAO_PESSOA_REF")) ? Convert.ToDateTime(reader["DATAHORAINCLUSAO_PESSOA_REF"]) : new DateTime(1900, 1, 1);
+            pessoaReferencia.DataHoraAlteracao = !reader.IsDBNull(reader.GetOrdinal("DATAHORAALTERACAO_PESSOA_REF")) ? Convert.ToDateTime(reader["DATAHORAALTERACAO_PESSOA_REF"]) : new DateTime(1900, 1, 1);
+            
+            return pessoaReferencia;
+        }
+
+        private PessoaTelefone ReadPessoaTelefoneFromDataReader(IDataReader reader, int codigoCliente)
+        {
+            PessoaTelefone pessoaTelefone = new PessoaTelefone();
+
+            pessoaTelefone.Id = 0;
+            pessoaTelefone.CodigoCliente = codigoCliente;
+            pessoaTelefone.AutoInc = Convert.ToInt32(reader["AUTOINC_PESSOA_TEL"]);
+            pessoaTelefone.Endereco = Convert.ToInt32(reader["ENDERECO_PESSOA_TEL"]);
+            pessoaTelefone.Pessoa = Convert.ToInt32(reader["PESSOA_PESSOA_TEL"]);
+            pessoaTelefone.Telefone = reader["TELEFONE_PESSOA_TEL"].ToString();
+            pessoaTelefone.Observacao = reader["OBSERVACAO_PESSOA_TEL"].ToString();
+            pessoaTelefone.TelefonePadrao = Convert.ToChar(reader["TELEFONEPADRAO_PESSOA_TEL"]);
+            pessoaTelefone.TipoTelefone = reader["TIPOTELEFONE_PESSOA_TEL"].ToString();
+            pessoaTelefone.DataHoraInclusao = !reader.IsDBNull(reader.GetOrdinal("DATAHORAINCLUSAO_PESSOA_TEL")) ? Convert.ToDateTime(reader["DATAHORAINCLUSAO_PESSOA_TEL"]) : new DateTime(1900, 1, 1);
+            pessoaTelefone.DataHoraAlteracao = !reader.IsDBNull(reader.GetOrdinal("DATAHORAALTERACAO_PESSOA_TEL")) ? Convert.ToDateTime(reader["DATAHORAALTERACAO_PESSOA_TEL"]) : new DateTime(1900, 1, 1);
+            pessoaTelefone.UsuarioInclusao = reader["USUARIOINCLUSAO_PESSOA_TEL"].ToString();
+            pessoaTelefone.UsuarioAlteracao = reader["USUARIOALTERACAO_PESSOA_TEL"].ToString();
+
+            return pessoaTelefone;
+        }
+
 
     }
 

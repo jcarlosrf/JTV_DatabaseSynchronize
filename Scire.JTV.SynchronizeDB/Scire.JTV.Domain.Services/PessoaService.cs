@@ -54,7 +54,46 @@ namespace Scire.JTV.Domain.Services
             return 0;
         }
 
+        public async Task<int> ImportarPessoasJuricas(DateTime dhAlteracao, DateTime dhAgora, int codigoCliente)
+        {
+            var pessoaFire = new Infra.Data.Firebird.PessoaRepository(FireString);
+            var pessoaMy = new Infra.Data.MySql.PessoaJuricaRepository(MyString);
 
+            var pessoasFire = pessoaFire.GetPessoasJuridicas(dhAlteracao, dhAgora, codigoCliente);
+
+            if (pessoasFire.Count > 0)
+                return await Task.Run(()=> pessoaMy.SavePessoas(pessoasFire));
+
+            return 0;
+        }
+
+
+        public async Task<int> ImportarPessoasReferencias(DateTime dhAlteracao, DateTime dhAgora, int codigoCliente)
+        {
+            var pessoaFire = new Infra.Data.Firebird.PessoaRepository(FireString);
+            var pessoaMy = new Infra.Data.MySql.PessoaReferenciaRepository(MyString);
+
+            var pessoasFire = await Task.Run(() => pessoaFire.GetPessoaReferencia(dhAlteracao, dhAgora, codigoCliente));
+
+            if (pessoasFire.Count > 0)
+                return pessoaMy.SavePessoas(pessoasFire);
+
+            return 0;
+        }
+
+
+        public async Task<int> ImportarPessoasTelefones(DateTime dhAlteracao, DateTime dhAgora, int codigoCliente)
+        {
+            var pessoaFire = new Infra.Data.Firebird.PessoaRepository(FireString);
+            var pessoaMy = new Infra.Data.MySql.PessoaTelefoneRepository(MyString);
+
+            var pessoasFire = await Task.Run(() => pessoaFire.GetPessoaTelefone(dhAlteracao, dhAgora, codigoCliente));
+
+            if (pessoasFire.Count > 0)
+                return pessoaMy.SavePessoas(pessoasFire);
+
+            return 0;
+        }
 
         public bool TestarFire()
         {

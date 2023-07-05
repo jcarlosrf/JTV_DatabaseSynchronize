@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Scire.JTV.Domain.Entities;
 
-namespace Scire.JTV.Infra.Data.MySql.Repositorios
+namespace Scire.JTV.Infra.Data.MySql
 {
     public class PessoaJuricaRepository : AbstractRepository
     {
@@ -35,9 +35,9 @@ namespace Scire.JTV.Infra.Data.MySql.Repositorios
                         retorno = _context.SaveChanges();
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw;
+                    throw ex;
                 }
             }
 
@@ -48,7 +48,7 @@ namespace Scire.JTV.Infra.Data.MySql.Repositorios
         public int SavePessoaJuridica(PessoaJuridica pessoaJuridica, bool save)
         {
 
-            var existingPessoaJuridica = _context.PessoasJuridicas.FirstOrDefault(pj => pj.CodigoCliente == pessoaJuridica.CodigoCliente && pj.Pessoa == pessoaJuridica.Pessoa);
+            var existingPessoaJuridica = _context.PessoasJuridicas.FirstOrDefault(pj => pj.CodigoCliente == pessoaJuridica.CodigoCliente && pj.PessoaJuridicaId == pessoaJuridica.PessoaJuridicaId);
 
             if (existingPessoaJuridica == null)
             {

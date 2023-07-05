@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Scire.JTV.Domain.Entities
 {
     [Serializable]
-    [Table("pessoa_jurica", Schema = "public")]
+    [Table("pessoa_juridica", Schema = "public")]
     public class PessoaJuridica
     {
         [Key]

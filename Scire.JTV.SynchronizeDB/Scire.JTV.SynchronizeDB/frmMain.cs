@@ -65,7 +65,7 @@ namespace Scire.JTV.SynchronizeDB
                 Application.DoEvents();
                 await Task.WhenAll(pessoas);
                 
-                dhagora = new DateTime(1980, 1, 1);
+                //dhagora = new DateTime(1980, 1, 1);
                 servConfiguracoes.UpdateDhAlteracao(CodigoCliente, dhagora);
 
             }
@@ -93,16 +93,26 @@ namespace Scire.JTV.SynchronizeDB
 
                 Task<int> pessoasFisicasTask = servPessoa.ImportarPessoasFisicas(dhAlteracao, dhAtual, CodigoCliente);
 
+                Task<int> pessoasJuridicasTask = servPessoa.ImportarPessoasJuricas(dhAlteracao, dhAtual, CodigoCliente);
+
+                Task<int> pessoasReferenciasTask = servPessoa.ImportarPessoasReferencias(dhAlteracao, dhAtual, CodigoCliente);
+
+                Task<int> pessoasTelefonesTask = servPessoa.ImportarPessoasTelefones(dhAlteracao, dhAtual, CodigoCliente);
+
+
                 Application.DoEvents();
                 await Task.WhenAll(pessoasTask, pessoasClientesTask, pessoasFisicasTask);
                 
                 int resultado1= pessoasTask.Result; 
                 int resultado2 = pessoasClientesTask.Result; 
                 int resultado3 = pessoasFisicasTask.Result;
+                int resultado4 = pessoasJuridicasTask.Result;
+                int resultado5 = pessoasReferenciasTask.Result;
+                int resultado6 = pessoasTelefonesTask.Result;
 
                 // Agora você pode usar os resultados como necessário
                 lblPessoas.Text += " Fim: " + DateTime.Now.ToString("dd/mm/yyyy HH:mm:ss") + "  Registros: " 
-                    + (resultado1 + resultado2 + resultado3).ToString();
+                    + (resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6).ToString();
 
             }
             catch (Exception ex)
