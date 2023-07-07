@@ -32,6 +32,7 @@
             this.txtCodigoCliente = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.firePassword = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.fireUSer = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.fireDb = new System.Windows.Forms.TextBox();
@@ -54,7 +55,6 @@
             this.myServer = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -110,6 +110,16 @@
             this.firePassword.Size = new System.Drawing.Size(175, 21);
             this.firePassword.TabIndex = 9;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(210, 122);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(53, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Password";
+            // 
             // fireUSer
             // 
             this.fireUSer.Location = new System.Drawing.Point(9, 139);
@@ -131,7 +141,7 @@
             // 
             this.fireDb.Location = new System.Drawing.Point(9, 92);
             this.fireDb.Name = "fireDb";
-            this.fireDb.Size = new System.Drawing.Size(175, 21);
+            this.fireDb.Size = new System.Drawing.Size(379, 21);
             this.fireDb.TabIndex = 5;
             // 
             // label3
@@ -312,16 +322,6 @@
             this.button1.Text = "Confirmar";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(210, 122);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(53, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Password";
             // 
             // groupBox3
             // 

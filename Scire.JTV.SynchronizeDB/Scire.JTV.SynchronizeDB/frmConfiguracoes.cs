@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Scire.JTV.Domain.Services;
 using Scire.JTV.SynchronizeDB.Properties;
 
 namespace Scire.JTV.SynchronizeDB
@@ -53,6 +54,12 @@ namespace Scire.JTV.SynchronizeDB
 
                 var myconn = string.Format("server={0};port={1};database={2};user id={3};password={4}"
                     , myServer.Text, myPorta.Text, myDb.Text, myUser.Text, myPassword.Text);
+
+
+                Criptografia cript = new Criptografia();
+                fireconn = cript.Encrypt(fireconn);
+                myconn = cript.Encrypt(myconn);
+
 
                 Settings.Default.ConnectionSource = fireconn;
                 Settings.Default.ConnectionTarget = myconn;

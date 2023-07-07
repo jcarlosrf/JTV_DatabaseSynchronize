@@ -14,6 +14,7 @@ namespace Scire.JTV.SynchronizeDB
         ChequesService servCheque;
         DuplicatasService servDuplicata;
         ConfiguracoesService servConfiguracoes;
+        Criptografia cript;
 
         private int CodigoCliente { get; set; }
         private string MyConnection { get; set; }
@@ -47,11 +48,12 @@ namespace Scire.JTV.SynchronizeDB
         {
             timer2.Start();
 
+            cript = new Criptografia();
             
-            CodigoCliente = Properties.Settings.Default.CodigoCliente;
-            MyConnection = Properties.Settings.Default.ConnectionTarget;
-            FireConnection = Properties.Settings.Default.ConnectionSource;
+            CodigoCliente = Properties.Settings.Default.CodigoCliente;           
             TempoMinutos = Properties.Settings.Default.TempoMinutos;
+            MyConnection = cript.Decrypt( Properties.Settings.Default.ConnectionTarget);
+            FireConnection = cript.Decrypt(Properties.Settings.Default.ConnectionSource);
 
             servPessoa = new PessoaService(FireConnection, MyConnection);
             servConfiguracoes = new ConfiguracoesService(FireConnection, MyConnection);
@@ -297,10 +299,10 @@ namespace Scire.JTV.SynchronizeDB
 
         private void Testarconexoes()
         {
-            CodigoCliente = Properties.Settings.Default.CodigoCliente;
-            MyConnection = Properties.Settings.Default.ConnectionTarget;
-            FireConnection = Properties.Settings.Default.ConnectionSource;
+            CodigoCliente = Properties.Settings.Default.CodigoCliente;           
             TempoMinutos = Properties.Settings.Default.TempoMinutos;
+            MyConnection = cript.Decrypt(Properties.Settings.Default.ConnectionTarget);
+            FireConnection = cript.Decrypt(Properties.Settings.Default.ConnectionSource);
 
             Application.DoEvents();
             PessoaService servPessoa = new PessoaService(FireConnection, MyConnection);
@@ -367,9 +369,7 @@ namespace Scire.JTV.SynchronizeDB
             configuracoesForm.CodigoCliente = this.CodigoCliente;
             configuracoesForm.MyConnection = this.MyConnection;
             configuracoesForm.FireConnection = this.FireConnection;
-
-            configuracoesForm.MyConnection = this.FireConnection; 
-            configuracoesForm.FireConnection = this.MyConnection;
+                     
 
             // Exibe o formulário como um diálogo e aguarda até que ele seja fechado
             DialogResult result = configuracoesForm.ShowDialog();

@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ChequesService.cs" />
     <Compile Include="ConfiguracoesService.cs" />
+    <Compile Include="Criptografia.cs" />
     <Compile Include="DuplicatasService.cs" />
     <Compile Include="PessoaService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
