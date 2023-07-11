@@ -45,7 +45,7 @@ namespace Scire.JTV.Infra.Data.MySql
         public int SaveRecord(Duplicata duplicata, bool save)
         {
             var existingRecord = _context.Duplicatas.FirstOrDefault(
-                ch => ch.CodigoCliente == duplicata.CodigoCliente && ch.AutoIncrementoAnteriorDuplicata == duplicata.AutoIncrementoAnteriorDuplicata);
+                ch => ch.CodigoCliente == duplicata.CodigoCliente && ch.AutoIncrementoDuplicata == duplicata.AutoIncrementoDuplicata);
 
             if (existingRecord == null)
             {

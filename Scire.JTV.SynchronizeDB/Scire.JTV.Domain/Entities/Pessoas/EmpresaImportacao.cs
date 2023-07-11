@@ -29,6 +29,9 @@ namespace Scire.JTV.Domain.Entities
 
         [Column("codigo_pessoa")]
         public int? CodigoPessoa { get; set; }
+
+        [Column("hora_resetbd")]
+        public string  HoraResetBd { get; set; }
     }
 
 }

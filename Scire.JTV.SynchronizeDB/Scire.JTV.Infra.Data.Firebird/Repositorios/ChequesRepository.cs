@@ -15,6 +15,40 @@ namespace Scire.JTV.Infra.Data.Firebird
             this.connectionString = connectionString;
         }
 
+        public DateTime GetDataMinima()
+        {
+            DateTime DTINC, DTALT;
+            using (FbConnection connection = new FbConnection(connectionString))
+            {
+                string queryInclusao = "SELECT min(DATAHORAINCLUSAO_CHE) AS DATAHORAINCLUSAO_CHE FROM CHEQUE ";
+                string queryAlteracao = "SELECT min(DATAHORAALTERACAO_CHE) as DATAHORAALTERACAO_CHE FROM CHEQUE ";
+                connection.Open();
+
+                using (FbCommand command = new FbCommand(queryInclusao, connection))
+                {
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        DTINC = !reader.IsDBNull(reader.GetOrdinal("DATAHORAINCLUSAO_CHE")) ? Convert.ToDateTime(reader["DATAHORAINCLUSAO_CHE"]) : new DateTime(2001, 1, 1);
+                    }
+                }
+
+                using (FbCommand command = new FbCommand(queryAlteracao, connection))
+                {
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        DTALT = !reader.IsDBNull(reader.GetOrdinal("DATAHORAALTERACAO_CHE")) ? Convert.ToDateTime(reader["DATAHORAALTERACAO_CHE"]) : new DateTime(2001, 1, 1);
+                    }
+                }
+            }
+
+            if (DTINC < DTALT)
+                return DTINC;
+
+            return DTALT;
+        }
+
         public List<Cheque> GetCheques(DateTime dataAtualizacao, DateTime dataAgora, int codigoCliente)
         {
             List<Cheque> cheques = new List<Cheque>();
@@ -23,10 +57,9 @@ namespace Scire.JTV.Infra.Data.Firebird
             {
                 string query = "SELECT * FROM Cheque " +
                     "WHERE (DATAHORAALTERACAO_CHE >= @DataAtualizacao and DATAHORAALTERACAO_CHE < @DataAgora) ";
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_CHE  is Null) ";
+                query += "or (DATAHORAALTERACAO_CHE  is Null AND (DATAHORAINCLUSAO_CHE >= @DataAtualizacao and DATAHORAINCLUSAO_CHE < @DataAgora)) ";
 
-                query += "order by DATAHORAALTERACAO_CHE";
+                query += "order by DATAHORAINCLUSAO_CHE, DATAHORAALTERACAO_CHE";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -55,9 +88,7 @@ namespace Scire.JTV.Infra.Data.Firebird
             using (FbConnection connection = new FbConnection(connectionString))
             {
                 string query = "SELECT * FROM CHEQUE_BAIXAS " +
-                    "WHERE (DATAHORAINCLUSAO_CHEBX >= @DataAtualizacao and DATAHORAINCLUSAO_CHEBX < @DataAgora) ";
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAINCLUSAO_CHEBX  is Null) ";
+                    "WHERE (DATAHORAINCLUSAO_CHEBX >= @DataAtualizacao and DATAHORAINCLUSAO_CHEBX < @DataAgora) ";                    
 
                 query += "order by DATAHORAINCLUSAO_CHEBX";
 
@@ -89,10 +120,9 @@ namespace Scire.JTV.Infra.Data.Firebird
             {
                 string query = "SELECT * FROM CHEQUE_DEVOLVIDO " +
                     "WHERE (DATAHORAALTERACAO_CHEDEV >= @DataAtualizacao and DATAHORAALTERACAO_CHEDEV < @DataAgora) ";
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_CHEDEV  is Null) ";
+                query += "or (DATAHORAALTERACAO_CHEDEV  is Null AND (DATAHORAINCLUSAO_CHEDEV >= @DataAtualizacao and DATAHORAINCLUSAO_CHEDEV  < @DataAgora)) ";
 
-                query += "order by DATAHORAALTERACAO_CHEDEV";
+                query += "order by DATAHORAINCLUSAO_CHEDEV , DATAHORAALTERACAO_CHEDEV";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {

@@ -51,46 +51,9 @@ namespace Scire.JTV.Infra.Data.MySql
             }
             else
             {
-                existingPessoaCliente.OpcaoFrete = pessoaCliente.OpcaoFrete;
-                existingPessoaCliente.FreteAtual = pessoaCliente.FreteAtual;
-                existingPessoaCliente.FreteIdeal = pessoaCliente.FreteIdeal;
-                existingPessoaCliente.TipoFrete = pessoaCliente.TipoFrete;
-                existingPessoaCliente.TipoFreteCT = pessoaCliente.TipoFreteCT;
-                existingPessoaCliente.CondicaoPagamento = pessoaCliente.CondicaoPagamento;
-                existingPessoaCliente.LimiteCredito = pessoaCliente.LimiteCredito;
-                existingPessoaCliente.PrazoMedioMaximo = pessoaCliente.PrazoMedioMaximo;
-                existingPessoaCliente.PrimeiraCompra = pessoaCliente.PrimeiraCompra;
-                existingPessoaCliente.FamiliaPedido = pessoaCliente.FamiliaPedido;
-                existingPessoaCliente.FamiliaAssistencia = pessoaCliente.FamiliaAssistencia;
-                existingPessoaCliente.BuscaMercadoria = pessoaCliente.BuscaMercadoria;
-                existingPessoaCliente.Situacao = pessoaCliente.Situacao;
-                existingPessoaCliente.SituacaoAssistencia = pessoaCliente.SituacaoAssistencia;
-                existingPessoaCliente.Banco = pessoaCliente.Banco;
-                existingPessoaCliente.Financeira = pessoaCliente.Financeira;
-                existingPessoaCliente.Redespacho = pessoaCliente.Redespacho;
-                existingPessoaCliente.EmpresaPadrao = pessoaCliente.EmpresaPadrao;
-                existingPessoaCliente.RedespachoPago = pessoaCliente.RedespachoPago;
-                existingPessoaCliente.CofinsSuframa = pessoaCliente.CofinsSuframa;
-                existingPessoaCliente.PisSuframa = pessoaCliente.PisSuframa;
-                existingPessoaCliente.IcmsSuframa = pessoaCliente.IcmsSuframa;
-                existingPessoaCliente.DiasParaIpi = pessoaCliente.DiasParaIpi;
-                existingPessoaCliente.DiasParaDesp = pessoaCliente.DiasParaDesp;
-                existingPessoaCliente.DiasParaSt = pessoaCliente.DiasParaSt;
-                existingPessoaCliente.AceitaEntregaParcial = pessoaCliente.AceitaEntregaParcial;
-                existingPessoaCliente.RateiaDespesas = pessoaCliente.RateiaDespesas;
-                existingPessoaCliente.RateiaIpi = pessoaCliente.RateiaIpi;
-                existingPessoaCliente.RateiaSt = pessoaCliente.RateiaSt;
-                existingPessoaCliente.FormatoDuplicataIpi = pessoaCliente.FormatoDuplicataIpi;
-                existingPessoaCliente.FormatoDuplicataDesp = pessoaCliente.FormatoDuplicataDesp;
-                existingPessoaCliente.FormatoDuplicataSt = pessoaCliente.FormatoDuplicataSt;
-                existingPessoaCliente.CondicaoPagamentoCte = pessoaCliente.CondicaoPagamentoCte;
-                existingPessoaCliente.BancoCte = pessoaCliente.BancoCte;
-                existingPessoaCliente.SituacaoCte = pessoaCliente.SituacaoCte;
-                existingPessoaCliente.ConsultorPadrao = pessoaCliente.ConsultorPadrao;
-                existingPessoaCliente.DataHoraInclusao = pessoaCliente.DataHoraInclusao;
-                existingPessoaCliente.DataHoraAlteracao = pessoaCliente.DataHoraAlteracao;
-                existingPessoaCliente.UsuarioInclusao = pessoaCliente.UsuarioInclusao;
-                existingPessoaCliente.UsuarioAlteracao = pessoaCliente.UsuarioAlteracao;
+                pessoaCliente.Id = existingPessoaCliente.Id;
+                _context.Entry(existingPessoaCliente).CurrentValues.SetValues(pessoaCliente);
+
             }
 
             if (save)

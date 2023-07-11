@@ -15,6 +15,40 @@ namespace Scire.JTV.Infra.Data.Firebird
             this.connectionString = connectionString;
         }
 
+        public DateTime GetDataMinima()
+        {
+            DateTime DTINC, DTALT;
+            using (FbConnection connection = new FbConnection(connectionString))
+            {
+                string queryInclusao = "SELECT min(DATAHORAINCLUSAO_PESSOA) AS DATAHORAINCLUSAO_PESSOA_CLI FROM PESSOA ";
+                string queryAlteracao = "SELECT min(DATAHORAALTERACAO_PESSOA) as DATAHORAALTERACAO_PESSOA FROM PESSOA ";
+                connection.Open();
+
+                using (FbCommand command = new FbCommand(queryInclusao, connection))
+                {
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        DTINC = !reader.IsDBNull(reader.GetOrdinal("DATAHORAINCLUSAO_PESSOA_CLI")) ? Convert.ToDateTime(reader["DATAHORAINCLUSAO_PESSOA_CLI"]) : new DateTime(2001, 1, 1);
+                    }
+                }
+
+                using (FbCommand command = new FbCommand(queryAlteracao, connection))
+                {
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        DTALT = !reader.IsDBNull(reader.GetOrdinal("DATAHORAALTERACAO_PESSOA")) ? Convert.ToDateTime(reader["DATAHORAALTERACAO_PESSOA"]) : new DateTime(2001, 1, 1);
+                    }
+                }
+            }
+
+            if (DTINC < DTALT)
+                return DTINC;
+
+            return DTALT;
+        }
+
         public List<Pessoa> GetPessoas(DateTime dataAtualizacao, DateTime dataAgora, int codigoCliente)
         {
             List<Pessoa> pessoas = new List<Pessoa>();
@@ -23,10 +57,10 @@ namespace Scire.JTV.Infra.Data.Firebird
             {
                 string query = "SELECT * FROM PESSOA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA < @DataAgora) ";
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_PESSOA  is Null) ";
 
-                query += "order by DATAHORAALTERACAO_PESSOA";
+                query += "or (DATAHORAALTERACAO_PESSOA  is Null and DATAHORAINCLUSAO_PESSOA >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA < @DataAgora) ";
+
+                query += "order by DATAHORAINCLUSAO_PESSOA, DATAHORAALTERACAO_PESSOA";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -56,10 +90,10 @@ namespace Scire.JTV.Infra.Data.Firebird
             {
                 string query = "SELECT * FROM PESSOA_CLIENTE " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_CLI >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_CLI < @DataAgora) ";
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_PESSOA_CLI  is Null) ";
+               
+               query += "or (DATAHORAALTERACAO_PESSOA_CLI  is Null AND  (DATAHORAINCLUSAO_PESSOA_CLI >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_CLI < @DataAgora)) ";
 
-                query += "order by DATAHORAALTERACAO_PESSOA_CLI";
+                query += "order by DATAHORAINCLUSAO_PESSOA_CLI, DATAHORAALTERACAO_PESSOA_CLI";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -90,10 +124,9 @@ namespace Scire.JTV.Infra.Data.Firebird
                 string query = "SELECT * FROM PESSOA_FISICA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_FIS >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_FIS < @DataAgora) ";
 
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_PESSOA_FIS  is Null) ";
+                query += "or (DATAHORAALTERACAO_PESSOA_FIS  is Null AND (DATAHORAINCLUSAO_PESSOA_FIS >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_FIS < @DataAgora)) ";
 
-                query += "order by DATAHORAALTERACAO_PESSOA_FIS";
+                query += "order by DATAHORAINCLUSAO_PESSOA_FIS, DATAHORAALTERACAO_PESSOA_FIS";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -124,10 +157,9 @@ namespace Scire.JTV.Infra.Data.Firebird
                 string query = "SELECT * FROM PESSOA_JURIDICA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_JUR >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_JUR < @DataAgora) ";
 
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_PESSOA_JUR  is Null) ";
+                    query += "or (DATAHORAALTERACAO_PESSOA_JUR  is Null AND (DATAHORAINCLUSAO_PESSOA_JUR >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_JUR < @DataAgora) ) ";
 
-                query += "order by DATAHORAALTERACAO_PESSOA_JUR";
+                query += "order by DATAHORAINCLUSAO_PESSOA_JUR, DATAHORAALTERACAO_PESSOA_JUR";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -157,11 +189,10 @@ namespace Scire.JTV.Infra.Data.Firebird
             {
                 string query = "SELECT * FROM PESSOA_REFERENCIA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_REF >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_REF < @DataAgora) ";
+                               
+                    query += "or (DATAHORAALTERACAO_PESSOA_REF  is Null AND (DATAHORAINCLUSAO_PESSOA_REF >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_REF < @DataAgora) ) ";
 
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_PESSOA_REF  is Null) ";
-
-                query += "order by DATAHORAALTERACAO_PESSOA_REF";
+                query += "order by DATAHORAINCLUSAO_PESSOA_REF , DATAHORAALTERACAO_PESSOA_REF";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -192,10 +223,9 @@ namespace Scire.JTV.Infra.Data.Firebird
                 string query = "SELECT * FROM PESSOA_TELEFONE " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_TEL >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_TEL < @DataAgora) ";
 
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_PESSOA_TEL  is Null) ";
+                query += "or (DATAHORAALTERACAO_PESSOA_TEL  is Null AND (DATAHORAINCLUSAO_PESSOA_TEL >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_TEL < @DataAgora)) ";
 
-                query += "order by DATAHORAALTERACAO_PESSOA_TEL";
+                query += "order by DATAHORAINCLUSAO_PESSOA_TEL , DATAHORAALTERACAO_PESSOA_TEL";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -216,8 +246,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             return pessoas;
         }
-
-
+        
         private Pessoa ReadPessoaFromDataReader(IDataReader reader, int codigocliente)
         { 
             Pessoa pessoa = new Pessoa();

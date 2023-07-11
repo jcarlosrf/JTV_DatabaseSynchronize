@@ -15,6 +15,40 @@ namespace Scire.JTV.Infra.Data.Firebird
             this.connectionString = connectionString;
         }
 
+        public DateTime GetDataMinima()
+        {
+            DateTime DTINC, DTALT;
+            using (FbConnection connection = new FbConnection(connectionString))
+            {
+                string queryInclusao = "SELECT min(DATAHORAINCLUSAO_DUP) AS DATAHORAINCLUSAO_DUP FROM DUPLICATA ";
+                string queryAlteracao = "SELECT min(DATAHORAALTERACAO_DUP) as DATAHORAALTERACAO_DUP FROM DUPLICATA ";
+                connection.Open();
+
+                using (FbCommand command = new FbCommand(queryInclusao, connection))
+                {
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        DTINC = !reader.IsDBNull(reader.GetOrdinal("DATAHORAINCLUSAO_DUP")) ? Convert.ToDateTime(reader["DATAHORAINCLUSAO_DUP"]) : new DateTime(2001, 1, 1);
+                    }
+                }
+
+                using (FbCommand command = new FbCommand(queryAlteracao, connection))
+                {
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        DTALT = !reader.IsDBNull(reader.GetOrdinal("DATAHORAALTERACAO_DUP")) ? Convert.ToDateTime(reader["DATAHORAALTERACAO_DUP"]) : new DateTime(2001, 1, 1);
+                    }
+                }
+            }
+
+            if (DTINC < DTALT)
+                return DTINC;
+
+            return DTALT;
+        }
+
         public List<Duplicata> GetDuplicatas(DateTime dataAtualizacao, DateTime dataAgora, int codigoCliente)
         {
             List<Duplicata> duplicatas = new List<Duplicata>();
@@ -23,10 +57,9 @@ namespace Scire.JTV.Infra.Data.Firebird
             {
                 string query = "SELECT * FROM DUPLICATA " +
                     "WHERE (DATAHORAALTERACAO_DUP >= @DataAtualizacao and DATAHORAALTERACAO_DUP < @DataAgora) ";
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_DUP  is Null) ";
+                    query += "or (DATAHORAALTERACAO_DUP  is Null AND (DATAHORAINCLUSAO_DUP >= @DataAtualizacao and DATAHORAINCLUSAO_DUP < @DataAgora)) ";
 
-                query += "order by DATAHORAALTERACAO_DUP";
+                query += "order by DATAHORAINCLUSAO_DUP, DATAHORAALTERACAO_DUP";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {
@@ -56,10 +89,10 @@ namespace Scire.JTV.Infra.Data.Firebird
             {
                 string query = "SELECT * FROM DUPLICATA_BAIXAS " +
                     "WHERE (DATAHORAALTERACAO_DUPBX >= @DataAtualizacao and DATAHORAALTERACAO_DUPBX < @DataAgora) ";
-                if (dataAtualizacao < new DateTime(2000, 1, 1))
-                    query += "or (DATAHORAALTERACAO_DUPBX  is Null) ";
+                
+                query += "or (DATAHORAALTERACAO_DUPBX  is Null AND (DATAHORAINCLUSAO_DUPBX >= @DataAtualizacao and DATAHORAINCLUSAO_DUPBX  < @DataAgora)) ";
 
-                query += "order by DATAHORAALTERACAO_DUPBX";
+                query += "order by DATAHORAINCLUSAO_DUPBX , DATAHORAALTERACAO_DUPBX";
 
                 using (FbCommand command = new FbCommand(query, connection))
                 {

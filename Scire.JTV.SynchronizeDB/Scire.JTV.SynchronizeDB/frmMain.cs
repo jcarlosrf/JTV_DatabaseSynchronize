@@ -19,8 +19,7 @@ namespace Scire.JTV.SynchronizeDB
         private int CodigoCliente { get; set; }
         private string MyConnection { get; set; }
         private string FireConnection { get; set; }
-        private int TempoMinutos { get; set; }
-        private string  ResetBd { get; set; }
+        private int TempoMinutos { get; set; }        
 
         public string Mensa1 { get; set; }
         public string Mensa2 { get; set; }
@@ -31,7 +30,9 @@ namespace Scire.JTV.SynchronizeDB
 
         private NotifyIcon notifyIcon;
 
-        private bool JaResetou { get; set; }
+        private DateTime dhReset { get; set; }
+
+        #region Eventos do formulário
 
         public frmMain()
         {
@@ -43,20 +44,22 @@ namespace Scire.JTV.SynchronizeDB
             timer1.Enabled = false;
             timer1.Tick += Timer1_Tick;
             
-            timer2 = new Timer();
-            timer2.Interval = 1000; // Intervalo de 1 segundo
-            timer2.Enabled = true;
-            timer2.Tick += Timer2_Tick;
+            //timer2 = new Timer();
+            //timer2.Interval = 1000; // Intervalo de 1 segundo
+            //timer2.Enabled = true;
+            //timer2.Tick += Timer2_Tick;
 
             notifyIcon = new NotifyIcon();
             notifyIcon.Icon = Properties.Resources.IconePrincipal; // Defina o ícone desejado
             notifyIcon.Text = "Synchronize DB"; // Defina o texto de dica
             notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
+
+            dhReset = new DateTime(1900, 1, 1);
         }
         
         private void frmMain_Load(object sender, EventArgs e)
         {
-            timer2.Start();            
+            //timer2.Start();            
 
             Testarconexoes();
         }
@@ -68,374 +71,58 @@ namespace Scire.JTV.SynchronizeDB
             notifyIcon.Visible = false;
         }
 
+        private void frmMain_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                Hide();
+                notifyIcon.Visible = true;
+            }
+        }
+
+        #endregion
+
+        #region timers
+
+        //private async void Timer2_Tick(object sender, EventArgs e)
+        //{
+        //    await Task.Run(() =>
+        //    {
+        //        Application.DoEvents();
+                
+        //    });
+        //    Invoke(new Action(() => { this.Update(); }));
+        //}               
+        
+        private async void Timer1_Tick(object sender, EventArgs e)
+        {
+            if (this.CodigoCliente <= 0 || this.TempoMinutos <= 0)
+            {
+                MessageBox.Show("Configuração inválida. Verfique!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+           
+            timer1.Enabled = false;
+
+            Task taskChamadas = ChamadasServicos();
+
+            await Task.WhenAll(taskChamadas);
+
+            timer1.Enabled = true;            
+        }
+
+        #endregion
+
+        #region configuracoes 
+
         private void BuscarConfiguracoes()
         {
             cript = new Criptografia();
 
             CodigoCliente = Properties.Settings.Default.CodigoCliente;
-            TempoMinutos = Properties.Settings.Default.TempoMinutos;
-            ResetBd = Properties.Settings.Default.ResetBD;
+            TempoMinutos = Properties.Settings.Default.TempoMinutos;            
             MyConnection = cript.Decrypt(Properties.Settings.Default.ConnectionTarget);
             FireConnection = cript.Decrypt(Properties.Settings.Default.ConnectionSource);
-
-            JaResetou = false;
-        }
-
-        private async void Timer2_Tick(object sender, EventArgs e)
-        {
-            await Task.Run(() =>
-            {
-                Application.DoEvents();
-                
-            });
-            Invoke(new Action(() => { this.Update(); }));
-        }               
-        
-        private async void Timer1_Tick(object sender, EventArgs e)
-        {
-            if (this.CodigoCliente <= 0)
-                MessageBox.Show("Cliente não configurado. Verfique!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            if (this.TempoMinutos <= 0)
-                MessageBox.Show("Configuração inválida. Verfique!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            await Task.Run(() =>
-            {
-                if (MyTestConnection && FireTestConnection)
-                {
-                    timer1.Enabled = false;
-                    ChamadasServicos();
-                }              
-            });
-           
-            Invoke(new Action(() => { this.Update(); }));
-        }
-
-        private async void ChamadasServicos()
-        {
-            try
-            {
-                servConfiguracoes = new ConfiguracoesService(FireConnection, MyConnection);
-                servPessoa = new PessoaService(FireConnection, MyConnection);
-                servCheque = new ChequesService(FireConnection, MyConnection);
-                servDuplicata = new DuplicatasService(FireConnection, MyConnection);
-
-                var configuracoes = await Task.Run(() => servConfiguracoes.ConfiguracoesCliente(this.CodigoCliente));
-
-                if (configuracoes == null)
-                    throw new Exception("Cliente não configurado. Verfique!");
-
-                DateTime dhagora = DateTime.Now.AddMinutes(-10);
-
-                DateTime dhreset;
-
-                DateTime.TryParse(dhagora.ToString("yyyy-MM-dd ") + this.ResetBd, out dhreset);
-                
-                Task pessoasTask ;
-                Task chequesTask ;
-                Task duplicatasTask ;
-
-                if (dhagora.Hour == dhreset.Hour && !this.JaResetou)
-                {
-                    pessoasTask = ChamadasServicosPessoas(new DateTime(2000,1,1,1,1,1), dhagora);
-                    chequesTask = ChamadasServicosCheques(new DateTime(2000, 1, 1, 1, 1, 1), dhagora);
-                    duplicatasTask = ChamadasServicosDuplicadas(new DateTime(2000, 1, 1, 1, 1, 1), dhagora);
-                }
-                else
-                {
-                     pessoasTask = ChamadasServicosPessoas(configuracoes.DataHoraPessoas.Value, dhagora);
-                     chequesTask = ChamadasServicosCheques(configuracoes.DataHoraCheques.Value, dhagora);
-                     duplicatasTask = ChamadasServicosDuplicadas(configuracoes.DataHoraDuplicatas.Value, dhagora);
-                }
-
-                Application.DoEvents();
-                await Task.WhenAll(pessoasTask, chequesTask, duplicatasTask);
-            }
-            
-            catch (Exception ex)
-            {
-                Invoke(new Action(() =>
-                {
-                    lblErro.Text = ex.Message;
-
-                }));
-            }
-            finally
-            {
-                timer1.Interval = TempoMinutos * 60 * 1000;
-                timer1.Enabled = true;
-                Application.DoEvents();
-            }
-        }
-
-        private async Task ChamadasServicosPessoas(DateTime dhAlteracao, DateTime dhAtual)
-        {
-            try
-            {
-                Mensa1 = "Inicio: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
-                Invoke(new Action(() => {
-                    lblPessoas.Text = Mensa1;
-                    pictureBox1.Visible = true;
-                    this.Update();
-                    Application.DoEvents();
-                }));
-
-                int Resultadofinal = 0;
-
-                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
-                {
-                    DateTime dhini, dhfin;
-
-                    if (dhbase.Date < dhAlteracao)
-                        dhini = dhAlteracao;
-                    else
-                        dhini = dhbase.Date;
-
-                    TimeSpan diff = dhAtual - dhbase;
-
-                    if (diff.TotalHours < 24)
-                        dhfin = dhAtual;
-                    else
-                        dhfin = dhini.Date.AddDays(1);
-
-                    Task<int> pessoasTask = servPessoa.ImportarPessoas(dhini, dhfin, CodigoCliente);
-
-                    Task<int> pessoasClientesTask = servPessoa.ImportarPessoasClientes(dhini, dhfin, CodigoCliente);
-
-                    Task<int> pessoasFisicasTask = servPessoa.ImportarPessoasFisicas(dhini, dhfin, CodigoCliente);
-
-                    Task<int> pessoasJuridicasTask = servPessoa.ImportarPessoasJuricas(dhini, dhfin, CodigoCliente);
-
-                    Task<int> pessoasReferenciasTask = servPessoa.ImportarPessoasReferencias(dhini, dhfin, CodigoCliente);
-
-                    Task<int> pessoasTelefonesTask = servPessoa.ImportarPessoasTelefones(dhini, dhfin, CodigoCliente);
-
-                    Task<int> empresasTask = servPessoa.ImportarEmpresas(CodigoCliente);
-
-                    Application.DoEvents();
-                    await Task.WhenAll(pessoasTask, pessoasClientesTask, pessoasFisicasTask
-                        , pessoasJuridicasTask, pessoasReferenciasTask, pessoasTelefonesTask, empresasTask);
-
-                    int resultado1 = pessoasTask.Result;
-                    int resultado2 = pessoasClientesTask.Result;
-                    int resultado3 = pessoasFisicasTask.Result;
-                    int resultado4 = pessoasJuridicasTask.Result;
-                    int resultado5 = pessoasReferenciasTask.Result;
-                    int resultado6 = pessoasTelefonesTask.Result;
-                    int resultado7 = empresasTask.Result;
-
-                    Resultadofinal += resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6;
-
-                    // Atualizacao da datahora
-                    servConfiguracoes.UpdateDhAlteracao(CodigoCliente, dhfin, Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Pessoa);
-
-
-                    Invoke(new Action(() =>
-                    {
-                        lblPessoas.Text = string.Format("Pessoas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy")
-                            , resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6);
-                        this.Refresh();
-                        Application.DoEvents();
-                    }));
-
-                    Mensa1 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
-                                    + Resultadofinal.ToString();
-                }
-
-
-                Invoke(new Action(() =>
-                {
-                    lblPessoas.Text = Mensa1;
-                    this.Update();
-                    Application.DoEvents();
-                }));
-            }
-            catch (Exception ex)
-            {
-                Invoke(new Action(() =>
-                {
-                    lblErro.Text = ex.Message;
-                }));
-            }
-            finally
-            {
-                Invoke(new Action(() => {
-                    pictureBox1.Visible = false;
-                }));
-                Application.DoEvents();
-            }
-        }
-
-        private async Task ChamadasServicosCheques(DateTime dhAlteracao, DateTime dhAtual)
-        {
-            try
-            {
-                Mensa2 = "Inicio: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-                Invoke(new Action(() =>
-                {
-                    lblCheques.Text = Mensa2;
-                    pictureBox2.Visible = true;
-                    this.Update();
-                    Application.DoEvents();
-                }));
-
-                int Resultadofinal = 0;
-
-                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
-                {
-                    DateTime dhini, dhfin;
-
-                    if (dhbase.Date < dhAlteracao)
-                        dhini = dhAlteracao;
-                    else
-                        dhini = dhbase.Date;
-
-                    TimeSpan diff = dhAtual - dhbase;
-
-                    if (diff.TotalHours < 24)
-                        dhfin = dhAtual;
-                    else
-                        dhfin = dhini.Date.AddDays(1);
-
-                    Task<int> chequesTask = servCheque.ImportarCheques(dhini, dhfin, CodigoCliente);
-
-                    Task<int> chequesbaixasTask = servCheque.ImportarChequesBaixas(dhini, dhfin, CodigoCliente);
-
-                    Task<int> chequesdevolvidosTask = servCheque.ImportarChequesDevolvidos(dhini, dhfin, CodigoCliente);
-
-                    Application.DoEvents();
-                    await Task.WhenAll(chequesTask, chequesbaixasTask, chequesdevolvidosTask);
-
-                    int resultado1 = chequesTask.Result;
-                    int resultado2 = chequesbaixasTask.Result;
-                    int resultado3 = chequesdevolvidosTask.Result;
-
-                    Resultadofinal += resultado1 + resultado2 + resultado3;
-
-                    // Atualizacao da datahora
-                    servConfiguracoes.UpdateDhAlteracao(CodigoCliente, dhfin, Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Cheques);
-
-                    Invoke(new Action(() =>
-                    {
-                        lblCheques.Text = string.Format("Cheques - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado1 + resultado2 + resultado3);
-                        this.Refresh();
-                        Application.DoEvents();
-                    }));
-                                       
-                    Mensa2 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
-                            + (Resultadofinal).ToString();
-                }
-
-                Invoke(new Action(() =>
-                {
-                    lblCheques.Text = Mensa2;
-                }));
-            }
-            catch (Exception ex)
-            {
-                Invoke(new Action(() =>
-                {
-                    lblErro.Text = ex.Message;
-
-                }));
-            }
-            finally
-            {
-                Invoke(new Action(() =>
-                {
-                    pictureBox2.Visible = false;
-                }));
-                Application.DoEvents();
-            }
-        }
-
-        private async Task ChamadasServicosDuplicadas(DateTime dhAlteracao, DateTime dhAtual)
-        {
-            Mensa3 = "Inicio: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            Invoke(new Action(() =>
-            {
-                lblDuplicatas.Text = Mensa3;
-                pictureBox3.Visible = true;
-            }));
-
-
-            try
-            {
-                int Resultadofinal = 0;
-
-                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
-                {
-                    DateTime dhini, dhfin;
-
-                    if (dhbase.Date < dhAlteracao)
-                        dhini = dhAlteracao;
-                    else
-                        dhini = dhbase.Date;
-
-                    TimeSpan diff =  dhAtual - dhbase;
-
-                    if (diff.TotalHours < 24)
-                        dhfin = dhAtual;
-                    else
-                        dhfin = dhini.Date.AddDays(1);
-
-
-                    Task<int> duplicataTask = servDuplicata.ImportarDuplicatas(dhini, dhfin, CodigoCliente);
-
-                    Task<int> duplicatabaixasTask = servDuplicata.ImportarDuplicatasBaixas(dhini, dhfin, CodigoCliente);
-
-                    Application.DoEvents();
-                    await Task.WhenAll(duplicataTask, duplicatabaixasTask);
-
-                    int resultado1 = duplicataTask.Result;
-                    int resultado2 = duplicatabaixasTask.Result;
-                    Resultadofinal += resultado1 + resultado2;
-
-                    // Atualizacao da datahora
-                    servConfiguracoes.UpdateDhAlteracao(CodigoCliente, dhfin, Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Duplicatas);
-
-                    Invoke(new Action(() =>
-                    {
-                        lblDuplicatas.Text =        string.Format("Duplicatas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado1) ;
-                        lblDuplicatasBaixas.Text =  string.Format("Dup Baixas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado2);
-                        this.Refresh();
-                        Application.DoEvents();
-                    }));
-                    
-                    Mensa3 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
-                       + Resultadofinal.ToString();
-
-                }
-               
-                Invoke(new Action(() =>
-                {
-                    lblDuplicatas.Text = Mensa3;
-                    lblDuplicatasBaixas.Text = "";
-
-                }));
-            }
-            catch (Exception ex)
-            {
-                Invoke(new Action(() =>
-                {
-                    lblErro.Text = ex.Message;
-
-                }));
-            }
-            finally
-            {
-                Invoke(new Action(() => {
-                    pictureBox3.Visible = false;
-                }));
-                Application.DoEvents();
-            }
-        }
-
-        private void ServDuplicata_AtuMensagem(string mensagem)
-        {
-            Mensa3 = mensagem;            
-            Application.DoEvents();
         }
 
         private void Testarconexoes()
@@ -449,7 +136,7 @@ namespace Scire.JTV.SynchronizeDB
             {
                 lblErro.Text = "Configuração inválida. Verfique!";
                 FireTestConnection = false;
-                MyTestConnection = false;                
+                MyTestConnection = false;
             }
             else
             {
@@ -497,7 +184,361 @@ namespace Scire.JTV.SynchronizeDB
                 timer1.Enabled = false;
             }
         }
-        
+
+        #endregion
+
+        #region Servicos
+
+        private async Task ChamadasServicos()
+        {
+            try
+            {
+                servConfiguracoes = new ConfiguracoesService(FireConnection, MyConnection);
+                servPessoa = new PessoaService(FireConnection, MyConnection);
+                servCheque = new ChequesService(FireConnection, MyConnection);
+                servDuplicata = new DuplicatasService(FireConnection, MyConnection);
+
+                var configuracoes = await Task.Run(() => servConfiguracoes.ConfiguracoesCliente(this.CodigoCliente));
+
+                if (configuracoes == null)
+                    throw new Exception("Cliente não configurado. Verfique!");
+
+                DateTime dhagora = DateTime.Now.AddMinutes(-10);
+
+                DateTime dhreset;
+
+                DateTime.TryParse(dhagora.ToString("yyyy-MM-dd ") + configuracoes.HoraResetBd, out dhreset);
+                
+                Task pessoasTask ;
+                Task chequesTask ;
+                Task duplicatasTask ;
+
+                if (dhagora >= dhreset &&  this.dhReset.Date < dhagora.Date)
+                {
+                    dhReset = dhagora;
+                    pessoasTask = ChamadasServicosPessoas(new DateTime(2000,1,1,1,1,1), dhagora);
+                    chequesTask = ChamadasServicosCheques(new DateTime(2000, 1, 1, 1, 1, 1), dhagora);
+                    duplicatasTask = ChamadasServicosDuplicadas(new DateTime(2000, 1, 1, 1, 1, 1), dhagora);
+                }
+                else
+                {
+                     pessoasTask = ChamadasServicosPessoas(configuracoes.DataHoraPessoas.Value, dhagora);
+                     chequesTask = ChamadasServicosCheques(configuracoes.DataHoraCheques.Value, dhagora);
+                     duplicatasTask = ChamadasServicosDuplicadas(configuracoes.DataHoraDuplicatas.Value, dhagora);
+                }
+
+                Application.DoEvents();
+                await Task.WhenAll(pessoasTask, chequesTask, duplicatasTask);
+            }
+            
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+
+                }));
+            }
+            finally
+            {
+                timer1.Interval = TempoMinutos * 60 * 1000;
+                timer1.Enabled = true;
+                timer1.Start();
+                Application.DoEvents();
+            }
+        }
+
+        private async Task ChamadasServicosPessoas(DateTime dhAlteracao, DateTime dhAtual)
+        {
+            try
+            {
+                Mensa1 = "Inicio: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+                Invoke(new Action(() => {
+                    lblPessoas.Text = Mensa1;
+                    pictureBox1.Visible = true;
+                    this.Update();
+                    Application.DoEvents();
+                }));
+
+                int Resultadofinal = 0;
+
+                if (dhAlteracao  <= new DateTime(2001,1,1,1,1,1))
+                {
+                    dhAlteracao = servPessoa.GetDataMinima();
+                }
+
+                // processo unico da empresas
+                int retEmpresas = await servPessoa.ImportarEmpresas(CodigoCliente);
+
+                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
+                {
+                    servPessoa = new PessoaService(FireConnection, MyConnection);
+                    
+                    DateTime dhini, dhfin;
+
+                    if (dhbase.Date < dhAlteracao)
+                        dhini = dhAlteracao;
+                    else
+                        dhini = dhbase.Date;
+
+                    TimeSpan diff = dhAtual - dhbase;
+
+                    if (diff.TotalHours < 24)
+                        dhfin = dhAtual;
+                    else
+                        dhfin = dhini.Date.AddDays(1);
+
+                    Task<int> pessoasTask = servPessoa.ImportarPessoas(dhini, dhfin, CodigoCliente);
+
+                    Task<int> pessoasClientesTask = servPessoa.ImportarPessoasClientes(dhini, dhfin, CodigoCliente);
+
+                    Task<int> pessoasFisicasTask = servPessoa.ImportarPessoasFisicas(dhini, dhfin, CodigoCliente);
+
+                    Task<int> pessoasJuridicasTask = servPessoa.ImportarPessoasJuricas(dhini, dhfin, CodigoCliente);
+
+                    Task<int> pessoasReferenciasTask = servPessoa.ImportarPessoasReferencias(dhini, dhfin, CodigoCliente);
+
+                    Task<int> pessoasTelefonesTask = servPessoa.ImportarPessoasTelefones(dhini, dhfin, CodigoCliente);
+                                        
+
+                    Application.DoEvents();
+                    await Task.WhenAll(pessoasTask, pessoasClientesTask, pessoasFisicasTask
+                        , pessoasJuridicasTask, pessoasReferenciasTask, pessoasTelefonesTask);
+
+                    int resultado1 = pessoasTask.Result;
+                    int resultado2 = pessoasClientesTask.Result;
+                    int resultado3 = pessoasFisicasTask.Result;
+                    int resultado4 = pessoasJuridicasTask.Result;
+                    int resultado5 = pessoasReferenciasTask.Result;
+                    int resultado6 = pessoasTelefonesTask.Result;
+
+                    Resultadofinal += resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6;
+
+                    if ((resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6) > 0)
+                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servPessoa.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Pessoa);
+
+
+                    Invoke(new Action(() =>
+                    {
+                        lblPessoas.Text = string.Format("Pessoas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy")
+                            , resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6);
+                        this.Refresh();
+                        Application.DoEvents();
+                    }));
+                   
+                }
+
+                Mensa1 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
+                                   + Resultadofinal.ToString();
+
+                Invoke(new Action(() =>
+                {
+                    lblPessoas.Text = Mensa1;
+                    this.Update();
+                    Application.DoEvents();
+                }));
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+                }));
+            }
+            finally
+            {
+                Invoke(new Action(() => {
+                    pictureBox1.Visible = false;
+                }));
+                Application.DoEvents();
+            }
+        }
+
+        private async Task ChamadasServicosCheques(DateTime dhAlteracao, DateTime dhAtual)
+        {
+            try
+            {
+                Mensa2 = "Inicio: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                Invoke(new Action(() =>
+                {
+                    lblCheques.Text = Mensa2;
+                    pictureBox2.Visible = true;
+                    this.Update();
+                    Application.DoEvents();
+                }));
+
+
+                if (dhAlteracao <= new DateTime(2001, 1, 1, 1, 1, 1))
+                {
+                    dhAlteracao = servCheque.GetDataMinima();
+                }
+
+                int Resultadofinal = 0;
+
+                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
+                {
+                    servCheque = new ChequesService(FireConnection, MyConnection);
+                    
+                    DateTime dhini, dhfin;
+
+                    if (dhbase.Date < dhAlteracao)
+                        dhini = dhAlteracao;
+                    else
+                        dhini = dhbase.Date;
+
+                    TimeSpan diff = dhAtual - dhbase;
+
+                    if (diff.TotalHours < 24)
+                        dhfin = dhAtual;
+                    else
+                        dhfin = dhini.Date.AddDays(1);
+
+                    Task<int> chequesTask = servCheque.ImportarCheques(dhini, dhfin, CodigoCliente);
+
+                    Task<int> chequesbaixasTask = servCheque.ImportarChequesBaixas(dhini, dhfin, CodigoCliente);
+
+                    Task<int> chequesdevolvidosTask = servCheque.ImportarChequesDevolvidos(dhini, dhfin, CodigoCliente);
+
+                    Application.DoEvents();
+                    await Task.WhenAll(chequesTask, chequesbaixasTask, chequesdevolvidosTask);
+
+                    int resultado1 = chequesTask.Result;
+                    int resultado2 = chequesbaixasTask.Result;
+                    int resultado3 = chequesdevolvidosTask.Result;
+
+                    Resultadofinal += resultado1 + resultado2 + resultado3;
+
+                    if ((resultado1 + resultado2+resultado3) > 0)
+                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servCheque.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Cheques);
+
+                    Invoke(new Action(() =>
+                    {
+                        lblCheques.Text = string.Format("Cheques - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado1 + resultado2 + resultado3);
+                        this.Refresh();
+                        Application.DoEvents();
+                    }));                                       
+                  
+                }
+                Mensa2 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
+                          + (Resultadofinal).ToString();
+
+                Invoke(new Action(() =>
+                {
+                    lblCheques.Text = Mensa2;
+                }));
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+
+                }));
+            }
+            finally
+            {
+                Invoke(new Action(() =>
+                {
+                    pictureBox2.Visible = false;
+                }));
+                Application.DoEvents();
+            }
+        }
+
+        private async Task ChamadasServicosDuplicadas(DateTime dhAlteracao, DateTime dhAtual)
+        {
+            Mensa3 = "Inicio: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            Invoke(new Action(() =>
+            {
+                lblDuplicatas.Text = Mensa3;
+                pictureBox3.Visible = true;
+            }));
+
+
+            try
+            {
+
+                if (dhAlteracao <= new DateTime(2001, 1, 1, 1, 1, 1))
+                {
+                    dhAlteracao = servDuplicata.GetDataMinima();
+                }
+
+                int Resultadofinal = 0;
+
+                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
+                {
+                    servDuplicata = new DuplicatasService(FireConnection, MyConnection);
+
+                    DateTime dhini, dhfin;
+
+                    if (dhbase.Date < dhAlteracao)
+                        dhini = dhAlteracao;
+                    else
+                        dhini = dhbase.Date;
+
+                    TimeSpan diff = dhAtual - dhbase;
+
+                    if (diff.TotalHours < 24)
+                        dhfin = dhAtual;
+                    else
+                        dhfin = dhini.Date.AddDays(1);
+
+
+                    Task<int> duplicataTask = servDuplicata.ImportarDuplicatas(dhini, dhfin, CodigoCliente);
+
+                    Task<int> duplicatabaixasTask = servDuplicata.ImportarDuplicatasBaixas(dhini, dhfin, CodigoCliente);
+
+                    Application.DoEvents();
+                    await Task.WhenAll(duplicataTask, duplicatabaixasTask);
+
+                    int resultado1 = duplicataTask.Result;
+                    int resultado2 = duplicatabaixasTask.Result;
+                    Resultadofinal += resultado1 + resultado2;
+
+                    if ((resultado1 + resultado2) > 0)
+                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servDuplicata.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Duplicatas);
+
+                    Invoke(new Action(() =>
+                    {
+                        lblDuplicatas.Text = string.Format("Duplicatas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado1);
+                        lblDuplicatasBaixas.Text = string.Format("Dup Baixas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado2);
+                        this.Refresh();
+                        
+                    }));
+                }
+
+                Mensa3 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
+                       + Resultadofinal.ToString();
+
+                Invoke(new Action(() =>
+                {
+                    lblDuplicatas.Text = Mensa3;
+                    lblDuplicatasBaixas.Text = "";
+
+                }));
+            }
+            catch (Exception ex)
+            {
+                Invoke(new Action(() =>
+                {
+                    lblErro.Text = ex.Message;
+
+                }));
+            }
+            finally
+            {
+                Invoke(new Action(() =>
+                {
+                    pictureBox3.Visible = false;
+                }));
+                Application.DoEvents();
+            }
+        }
+
+        #endregion
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             timer1.Stop();
@@ -510,7 +551,7 @@ namespace Scire.JTV.SynchronizeDB
             configuracoesForm.CodigoCliente = this.CodigoCliente;
             configuracoesForm.MyConnection = this.MyConnection;
             configuracoesForm.FireConnection = this.FireConnection;
-            configuracoesForm.ResetBD = this.ResetBd;                     
+            
 
             // Exibe o formulário como um diálogo e aguarda até que ele seja fechado
             DialogResult result = configuracoesForm.ShowDialog();
@@ -527,14 +568,7 @@ namespace Scire.JTV.SynchronizeDB
             }
         }
 
-        private void frmMain_Resize(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Minimized)
-            {
-                Hide();
-                notifyIcon.Visible = true;
-            }
-        }
+        
     }
 
 }

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblFire = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
             this.firePassword = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.fireUSer = new System.Windows.Forms.TextBox();
@@ -40,6 +42,8 @@
             this.fireServ = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lblMy = new System.Windows.Forms.Label();
+            this.button4 = new System.Windows.Forms.Button();
             this.myPassword = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.myUser = new System.Windows.Forms.TextBox();
@@ -51,17 +55,11 @@
             this.myServer = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label13 = new System.Windows.Forms.Label();
+            this.txtCodigoCliente = new System.Windows.Forms.TextBox();
             this.txtTempo = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.txtReset = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.txtCodigoCliente = new System.Windows.Forms.TextBox();
-            this.lblFire = new System.Windows.Forms.Label();
-            this.lblMy = new System.Windows.Forms.Label();
-            this.button4 = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -93,6 +91,24 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Cliente - Origem dos dados (Firebird)";
             this.groupBox1.Visible = false;
+            // 
+            // lblFire
+            // 
+            this.lblFire.AutoSize = true;
+            this.lblFire.Location = new System.Drawing.Point(210, 192);
+            this.lblFire.Name = "lblFire";
+            this.lblFire.Size = new System.Drawing.Size(0, 15);
+            this.lblFire.TabIndex = 13;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(311, 184);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 26);
+            this.button3.TabIndex = 12;
+            this.button3.Text = "TESTAR";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // firePassword
             // 
@@ -202,6 +218,24 @@
             this.groupBox2.Text = "Servidor Central - Destino dos dados (MySQL)";
             this.groupBox2.Visible = false;
             // 
+            // lblMy
+            // 
+            this.lblMy.AutoSize = true;
+            this.lblMy.Location = new System.Drawing.Point(212, 192);
+            this.lblMy.Name = "lblMy";
+            this.lblMy.Size = new System.Drawing.Size(0, 15);
+            this.lblMy.TabIndex = 15;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(313, 184);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 26);
+            this.button4.TabIndex = 14;
+            this.button4.Text = "TESTAR";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // myPassword
             // 
             this.myPassword.Location = new System.Drawing.Point(213, 139);
@@ -290,7 +324,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(779, 415);
+            this.button1.Location = new System.Drawing.Point(779, 351);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(103, 40);
             this.button1.TabIndex = 11;
@@ -298,42 +332,27 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(311, 184);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 26);
-            this.button3.TabIndex = 12;
-            this.button3.Text = "TESTAR";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.txtCodigoCliente);
-            this.groupBox4.Controls.Add(this.txtReset);
-            this.groupBox4.Controls.Add(this.label14);
             this.groupBox4.Controls.Add(this.txtTempo);
             this.groupBox4.Controls.Add(this.label12);
             this.groupBox4.Controls.Add(this.label13);
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(13, 253);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(416, 202);
+            this.groupBox4.Size = new System.Drawing.Size(416, 138);
             this.groupBox4.TabIndex = 15;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Gerais";
             this.groupBox4.Visible = false;
             // 
-            // label13
+            // txtCodigoCliente
             // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(6, 29);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(90, 13);
-            this.label13.TabIndex = 12;
-            this.label13.Text = "Código do Cliente";
+            this.txtCodigoCliente.Location = new System.Drawing.Point(6, 45);
+            this.txtCodigoCliente.Name = "txtCodigoCliente";
+            this.txtCodigoCliente.Size = new System.Drawing.Size(175, 21);
+            this.txtCodigoCliente.TabIndex = 14;
             // 
             // txtTempo
             // 
@@ -352,65 +371,25 @@
             this.label12.TabIndex = 14;
             this.label12.Text = "Intervalo entre atualizações (minutos)";
             // 
-            // txtReset
+            // label13
             // 
-            this.txtReset.Location = new System.Drawing.Point(9, 162);
-            this.txtReset.Name = "txtReset";
-            this.txtReset.Size = new System.Drawing.Size(175, 21);
-            this.txtReset.TabIndex = 17;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(6, 145);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(105, 13);
-            this.label14.TabIndex = 16;
-            this.label14.Text = "Horário do Reset BD";
-            // 
-            // txtCodigoCliente
-            // 
-            this.txtCodigoCliente.Location = new System.Drawing.Point(6, 45);
-            this.txtCodigoCliente.Name = "txtCodigoCliente";
-            this.txtCodigoCliente.Size = new System.Drawing.Size(175, 21);
-            this.txtCodigoCliente.TabIndex = 14;
-            // 
-            // lblFire
-            // 
-            this.lblFire.AutoSize = true;
-            this.lblFire.Location = new System.Drawing.Point(210, 192);
-            this.lblFire.Name = "lblFire";
-            this.lblFire.Size = new System.Drawing.Size(0, 15);
-            this.lblFire.TabIndex = 13;
-            // 
-            // lblMy
-            // 
-            this.lblMy.AutoSize = true;
-            this.lblMy.Location = new System.Drawing.Point(212, 192);
-            this.lblMy.Name = "lblMy";
-            this.lblMy.Size = new System.Drawing.Size(0, 15);
-            this.lblMy.TabIndex = 15;
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(313, 184);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 26);
-            this.button4.TabIndex = 14;
-            this.button4.Text = "TESTAR";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(6, 29);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(90, 13);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "Código do Cliente";
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.button2);
             this.groupBox3.Controls.Add(this.textBox1);
             this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox3.Location = new System.Drawing.Point(279, 188);
+            this.groupBox3.Location = new System.Drawing.Point(279, 145);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(342, 114);
-            this.groupBox3.TabIndex = 16;
+            this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Password";
             // 
@@ -436,7 +415,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(901, 472);
+            this.ClientSize = new System.Drawing.Size(901, 404);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.button1);
@@ -490,8 +469,6 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TextBox txtCodigoCliente;
-        private System.Windows.Forms.TextBox txtReset;
-        private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox txtTempo;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;

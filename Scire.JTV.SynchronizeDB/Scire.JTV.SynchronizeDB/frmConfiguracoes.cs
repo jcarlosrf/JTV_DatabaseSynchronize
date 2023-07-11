@@ -12,8 +12,7 @@ namespace Scire.JTV.SynchronizeDB
         public string FireConnection { get; set; }
         public int CodigoCliente { get; set; }
         public int TempoMinutos { get; set; }
-        public string ResetBD { get; set; }
-
+        
         public frmConfiguracoes()
         {
             InitializeComponent();
@@ -24,7 +23,8 @@ namespace Scire.JTV.SynchronizeDB
             CArregardados();
         }
 
-        private void CArregardados() { 
+        private void CArregardados()
+        {
             var dados = MyConnection.Split(';');
 
             myServer.Text = dados[0].Split('=')[1].ToString();
@@ -32,7 +32,7 @@ namespace Scire.JTV.SynchronizeDB
             myDb.Text = dados[2].Split('=')[1].ToString();
             myUser.Text = dados[3].Split('=')[1].ToString();
             myPassword.Text = dados[4].Split('=')[1].ToString();
-            
+
 
             // User=SYSDBA;Password=masterkey;Database=E:\Projetos\Workana\DadosMC\DadosMC.fdb;DataSource=localhost;Port=3050
 
@@ -46,7 +46,6 @@ namespace Scire.JTV.SynchronizeDB
 
             txtCodigoCliente.Text = CodigoCliente.ToString();
             txtTempo.Text = TempoMinutos.ToString();
-            txtReset.Text = ResetBD;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -69,8 +68,7 @@ namespace Scire.JTV.SynchronizeDB
                 Settings.Default.ConnectionTarget = myconn;
 
                 Settings.Default.CodigoCliente = int.Parse(txtCodigoCliente.Text);
-                Settings.Default.TempoMinutos = int.Parse(txtTempo.Text);
-                Settings.Default.ResetBD = txtReset.Text.Trim();
+                Settings.Default.TempoMinutos = int.Parse(txtTempo.Text);                
                 
                 // Salvar as alterações nas configurações
                 Settings.Default.Save();
