@@ -18,18 +18,18 @@ namespace Scire.JTV.Domain.Services
         {
             FireString = fireString;
             MyString = mysqlString;
-
-            clienteRepository = new Infra.Data.MySql.EmpresaImportacaoRepository(MyString);
         }
 
         public EmpresaImportacao ConfiguracoesCliente(int codigoCliente)
         {
+            clienteRepository = new Infra.Data.MySql.EmpresaImportacaoRepository(MyString);
             return clienteRepository.GetEntity(codigoCliente);
         }
 
-        public bool UpdateDhAlteracao(int codigoCliente , DateTime DhAtualizacao)
+        public bool UpdateDhAlteracao(int codigoCliente , DateTime DhAtualizacao, Infra.Data.MySql.EmpresaImportacaoRepository.Servico servico)
         {
-            var retorno = clienteRepository.UpdateDataHora(codigoCliente, DhAtualizacao);
+            clienteRepository = new Infra.Data.MySql.EmpresaImportacaoRepository(MyString);
+            var retorno = clienteRepository.UpdateDataHora(codigoCliente, DhAtualizacao, servico);
             return retorno > 0;
         }
 

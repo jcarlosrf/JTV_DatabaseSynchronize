@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -45,6 +46,7 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.lblDuplicatasBaixas = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -104,9 +106,11 @@
             // lblErro
             // 
             this.lblErro.AutoSize = true;
-            this.lblErro.Location = new System.Drawing.Point(18, 363);
+            this.lblErro.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblErro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.lblErro.Location = new System.Drawing.Point(18, 404);
             this.lblErro.Name = "lblErro";
-            this.lblErro.Size = new System.Drawing.Size(0, 13);
+            this.lblErro.Size = new System.Drawing.Size(0, 15);
             this.lblErro.TabIndex = 5;
             // 
             // label6
@@ -158,7 +162,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Scire.JTV.SynchronizeDB.Properties.Resources.Spinner;
-            this.pictureBox1.Location = new System.Drawing.Point(239, 101);
+            this.pictureBox1.Location = new System.Drawing.Point(303, 123);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(60, 60);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -169,7 +173,7 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = global::Scire.JTV.SynchronizeDB.Properties.Resources.Spinner;
-            this.pictureBox2.Location = new System.Drawing.Point(239, 193);
+            this.pictureBox2.Location = new System.Drawing.Point(303, 216);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(60, 60);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -180,7 +184,7 @@
             // pictureBox3
             // 
             this.pictureBox3.Image = global::Scire.JTV.SynchronizeDB.Properties.Resources.Spinner;
-            this.pictureBox3.Location = new System.Drawing.Point(239, 285);
+            this.pictureBox3.Location = new System.Drawing.Point(303, 309);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(60, 60);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -199,11 +203,20 @@
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // lblDuplicatasBaixas
+            // 
+            this.lblDuplicatasBaixas.AutoSize = true;
+            this.lblDuplicatasBaixas.Location = new System.Drawing.Point(18, 354);
+            this.lblDuplicatasBaixas.Name = "lblDuplicatasBaixas";
+            this.lblDuplicatasBaixas.Size = new System.Drawing.Size(0, 13);
+            this.lblDuplicatasBaixas.TabIndex = 15;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(428, 426);
+            this.ClientSize = new System.Drawing.Size(428, 437);
+            this.Controls.Add(this.lblDuplicatasBaixas);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
@@ -220,9 +233,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMain";
             this.Text = "Sincronizar Banco de Dados";
             this.Load += new System.EventHandler(this.frmMain_Load);
+            this.Resize += new System.EventHandler(this.frmMain_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
@@ -250,6 +265,7 @@
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lblDuplicatasBaixas;
     }
 }
 

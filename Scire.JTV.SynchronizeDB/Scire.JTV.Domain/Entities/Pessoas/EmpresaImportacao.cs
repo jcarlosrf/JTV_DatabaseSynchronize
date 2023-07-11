@@ -15,8 +15,14 @@ namespace Scire.JTV.Domain.Entities
         [Column("cnpj")]
         public string Cnpj { get; set; }
 
-        [Column("datahora_importacao")]
-        public DateTime? DataHoraImportacao { get; set; }
+        [Column("dhpessoas")]
+        public DateTime? DataHoraPessoas { get; set; }
+
+        [Column("dhcheques")]
+        public DateTime? DataHoraCheques { get; set; }
+
+        [Column("dhduplicatas")]
+        public DateTime? DataHoraDuplicatas { get; set; }
 
         [Column("codigo_emp")]
         public int? CodigoEmpresa { get; set; }

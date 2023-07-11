@@ -25,8 +25,9 @@ namespace Scire.JTV.SynchronizeDB.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("server=177.53.143.203;port=3306;database=chronosbi_financeiro;user id=chronosbi_f" +
-            "inanceiro;password=vv!0^f03JXtP")]
+        [global::System.Configuration.DefaultSettingValueAttribute("madq90swhEuaFABZvQcxO/RiMG2Te4dykrvcwLEXzvU0CL9ZT4TL0qgylBpi1ln3D6/+nWsHjSmn62WQq" +
+            "IgajgvA34J3fYsU16HQ6hIFChezF2iDAUeahyFoy84KO6xtdDbIe5Pbjcbeg+7+bvLBEwTnVq7w8jCi8" +
+            "YK4SfBxB0U=")]
         public string ConnectionTarget {
             get {
                 return ((string)(this["ConnectionTarget"]));
@@ -38,8 +39,8 @@ namespace Scire.JTV.SynchronizeDB.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("User=SYSDBA;Password=masterkey;Database=E:\\Projetos\\Workana\\DadosMC\\DadosMC.fdb;D" +
-            "ataSource=localhost;Port=3050")]
+        [global::System.Configuration.DefaultSettingValueAttribute("gwJJHXTwULp5CwVl/MoCuuK6bwPK0P2Prt0Or0RhKUVIEZpWYksnprrpXifrY77oFfPr1KkpAtiU+7V04" +
+            "oG6Vg2TsWBrqhRz7Xh/UPShl4C5At1Lc4fpRJJcelH64iyZ9Q73j5BMF/cxpvHRRV3NXw==")]
         public string ConnectionSource {
             get {
                 return ((string)(this["ConnectionSource"]));
@@ -70,6 +71,18 @@ namespace Scire.JTV.SynchronizeDB.Properties {
             }
             set {
                 this["TempoMinutos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("23:59")]
+        public string ResetBD {
+            get {
+                return ((string)(this["ResetBD"]));
+            }
+            set {
+                this["ResetBD"] = value;
             }
         }
     }

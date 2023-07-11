@@ -22,8 +22,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scire.JTV.Infra.Data.MySql"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scire.JTV.Domain.Services", "Scire.JTV.Domain.Services\Scire.JTV.Domain.Services.csproj", "{C4F390FC-6095-4963-9F8F-FEC3B77E034D}"
 EndProject
-Project("{E729F059-12D4-455F-A2A4-FDA8DD25E08A}") = "SetupSynchronizeDB", "SetupSynchronizeDB\SetupSynchronizeDB.isproj", "{C45F09DE-F1B5-4DCC-B3FC-58CAC60AAFF2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,10 +48,6 @@ Global
 		{C4F390FC-6095-4963-9F8F-FEC3B77E034D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4F390FC-6095-4963-9F8F-FEC3B77E034D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4F390FC-6095-4963-9F8F-FEC3B77E034D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C45F09DE-F1B5-4DCC-B3FC-58CAC60AAFF2}.Debug|Any CPU.ActiveCfg = Debug
-		{C45F09DE-F1B5-4DCC-B3FC-58CAC60AAFF2}.Debug|Any CPU.Build.0 = Debug
-		{C45F09DE-F1B5-4DCC-B3FC-58CAC60AAFF2}.Release|Any CPU.ActiveCfg = Release
-		{C45F09DE-F1B5-4DCC-B3FC-58CAC60AAFF2}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,7 +58,6 @@ Global
 		{68820438-1FA1-44B0-8459-24F58BCE5D63} = {34B35B7D-FFD1-4407-ACFC-3B23EAEEF525}
 		{D9028DF6-9027-4708-A70C-37828249BEC6} = {907FE6A3-4367-4DB2-A9A2-8C19B089A967}
 		{C4F390FC-6095-4963-9F8F-FEC3B77E034D} = {34B35B7D-FFD1-4407-ACFC-3B23EAEEF525}
-		{C45F09DE-F1B5-4DCC-B3FC-58CAC60AAFF2} = {F1DDB672-02F8-45B5-A618-F788DE6F7A23}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB7D0B6D-E071-4212-9B9B-EC0AB004F5A1}

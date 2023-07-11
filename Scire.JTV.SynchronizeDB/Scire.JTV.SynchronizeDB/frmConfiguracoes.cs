@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Scire.JTV.Domain.Services;
 using Scire.JTV.SynchronizeDB.Properties;
@@ -11,6 +12,7 @@ namespace Scire.JTV.SynchronizeDB
         public string FireConnection { get; set; }
         public int CodigoCliente { get; set; }
         public int TempoMinutos { get; set; }
+        public string ResetBD { get; set; }
 
         public frmConfiguracoes()
         {
@@ -30,6 +32,7 @@ namespace Scire.JTV.SynchronizeDB
             myDb.Text = dados[2].Split('=')[1].ToString();
             myUser.Text = dados[3].Split('=')[1].ToString();
             myPassword.Text = dados[4].Split('=')[1].ToString();
+            
 
             // User=SYSDBA;Password=masterkey;Database=E:\Projetos\Workana\DadosMC\DadosMC.fdb;DataSource=localhost;Port=3050
 
@@ -43,6 +46,7 @@ namespace Scire.JTV.SynchronizeDB
 
             txtCodigoCliente.Text = CodigoCliente.ToString();
             txtTempo.Text = TempoMinutos.ToString();
+            txtReset.Text = ResetBD;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -66,6 +70,7 @@ namespace Scire.JTV.SynchronizeDB
 
                 Settings.Default.CodigoCliente = int.Parse(txtCodigoCliente.Text);
                 Settings.Default.TempoMinutos = int.Parse(txtTempo.Text);
+                Settings.Default.ResetBD = txtReset.Text.Trim();
                 
                 // Salvar as alterações nas configurações
                 Settings.Default.Save();
@@ -79,19 +84,68 @@ namespace Scire.JTV.SynchronizeDB
             }
         }
 
-        
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var fireconn = string.Format("User={0};Password={1};Database={2};DataSource={3};Port={4}"
+                   , fireUSer.Text, firePassword.Text, fireDb.Text, fireServ.Text, firePort.Text);
 
-        private void button2_Click_1(object sender, EventArgs e)
+            var myconn = string.Format("server={0};port={1};database={2};user id={3};password={4}"
+                , myServer.Text, myPorta.Text, myDb.Text, myUser.Text, myPassword.Text);
+
+            PessoaService servPessoa1 = new PessoaService(fireconn, myconn);
+            
+            bool  FireTestConnection = servPessoa1.TestarFire();
+
+            if (FireTestConnection)
+            {
+                lblFire.Text = "Conectado";
+                lblFire.ForeColor = Color.Green;                
+            }
+            else
+            {
+                lblFire.Text = "Erro";
+                lblFire.ForeColor = Color.Red;
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var fireconn = string.Format("User={0};Password={1};Database={2};DataSource={3};Port={4}"
+                   , fireUSer.Text, firePassword.Text, fireDb.Text, fireServ.Text, firePort.Text);
+
+            var myconn = string.Format("server={0};port={1};database={2};user id={3};password={4}"
+                , myServer.Text, myPorta.Text, myDb.Text, myUser.Text, myPassword.Text);
+
+            PessoaService servPessoa1 = new PessoaService(fireconn, myconn);
+            
+            bool MyTestConnection = servPessoa1.TestarMy();
+
+            if (MyTestConnection)
+            {
+                lblMy.Text = "Conectado";
+                lblMy.ForeColor = Color.Green;
+            }
+            else
+            {
+
+                lblMy.Text = "Erro";
+                lblMy.ForeColor = Color.Red;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
         {
             if (textBox1.Text == "Scire2023")
             {
                 groupBox1.Visible = true;
                 groupBox2.Visible = true;
+                groupBox4.Visible = true;
                 groupBox3.Visible = false;
+
                 CArregardados();
             }
             else
                 this.Close();
         }
-    }
+    }    
 }
