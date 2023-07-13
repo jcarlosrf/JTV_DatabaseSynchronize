@@ -55,9 +55,11 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM DUPLICATA " +
-                    "WHERE (DATAHORAALTERACAO_DUP >= @DataAtualizacao and DATAHORAALTERACAO_DUP < @DataAgora) ";
-                    query += "or (DATAHORAALTERACAO_DUP  is Null AND (DATAHORAINCLUSAO_DUP >= @DataAtualizacao and DATAHORAINCLUSAO_DUP < @DataAgora)) ";
+                string query = "SELECT FIRST 500  * FROM DUPLICATA " +
+                    "WHERE ((DATAHORAALTERACAO_DUP >= @DataAtualizacao and DATAHORAALTERACAO_DUP < @DataAgora) ";
+                query += "or (DATAHORAALTERACAO_DUP  is Null AND (DATAHORAINCLUSAO_DUP >= @DataAtualizacao and DATAHORAINCLUSAO_DUP < @DataAgora))) ";
+
+                query += "and TIPO_DUP = 1 ";
 
                 query += "order by DATAHORAINCLUSAO_DUP, DATAHORAALTERACAO_DUP";
 
@@ -87,11 +89,11 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM DUPLICATA_BAIXAS " +
-                    "WHERE (DATAHORAALTERACAO_DUPBX >= @DataAtualizacao and DATAHORAALTERACAO_DUPBX < @DataAgora) ";
+                string query = "SELECT FIRST 500  * FROM DUPLICATA_BAIXAS " +
+                    "WHERE ((DATAHORAALTERACAO_DUPBX >= @DataAtualizacao and DATAHORAALTERACAO_DUPBX < @DataAgora) ";
                 
-                query += "or (DATAHORAALTERACAO_DUPBX  is Null AND (DATAHORAINCLUSAO_DUPBX >= @DataAtualizacao and DATAHORAINCLUSAO_DUPBX  < @DataAgora)) ";
-
+                query += "or (DATAHORAALTERACAO_DUPBX  is Null AND (DATAHORAINCLUSAO_DUPBX >= @DataAtualizacao and DATAHORAINCLUSAO_DUPBX  < @DataAgora))) ";
+                query += "and exists (select AUTOINC_DUP from DUPLICATA where DUPLICATA_DUPBX = AUTOINC_DUP and TIPO_DUP = 1) ";
                 query += "order by DATAHORAINCLUSAO_DUPBX , DATAHORAALTERACAO_DUPBX";
 
                 using (FbCommand command = new FbCommand(query, connection))
@@ -113,8 +115,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             return duplicatas;
         }
-
-
+        
         private Duplicata ReadDuplicataFromDataReader(IDataReader reader, int codigocliente)
         {
             Duplicata duplicata = new Duplicata();

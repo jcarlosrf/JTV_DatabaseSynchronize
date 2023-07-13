@@ -26,11 +26,11 @@ namespace Scire.JTV.SynchronizeDB
         public string Mensa3 { get; set; }
 
         private Timer timer1;
-        private Timer timer2;
 
         private NotifyIcon notifyIcon;
 
-        private DateTime dhReset { get; set; }
+        private bool Resetou { get; set; }
+        private bool StopServico { get; set; }
 
         #region Eventos do formulário
 
@@ -54,7 +54,8 @@ namespace Scire.JTV.SynchronizeDB
             notifyIcon.Text = "Synchronize DB"; // Defina o texto de dica
             notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
 
-            dhReset = new DateTime(1900, 1, 1);
+            Resetou = false;
+            StopServico = false;
         }
         
         private void frmMain_Load(object sender, EventArgs e)
@@ -203,32 +204,44 @@ namespace Scire.JTV.SynchronizeDB
                 if (configuracoes == null)
                     throw new Exception("Cliente não configurado. Verfique!");
 
-                DateTime dhagora = DateTime.Now.AddMinutes(-10);
+                DateTime dhAgora = DateTime.Now;
 
-                DateTime dhreset;
+                DateTime dhReset;
 
-                DateTime.TryParse(dhagora.ToString("yyyy-MM-dd ") + configuracoes.HoraResetBd, out dhreset);
-                
-                Task pessoasTask ;
-                Task chequesTask ;
-                Task duplicatasTask ;
+                DateTime.TryParse(dhAgora.ToString("yyyy-MM-dd ") + configuracoes.HoraResetBd, out dhReset);
+                                
+                TimeSpan diferenca = dhAgora - dhReset;
 
-                if (dhagora >= dhreset &&  this.dhReset.Date < dhagora.Date)
+                if (dhAgora >= dhReset && diferenca.TotalMinutes <= 60)
                 {
-                    dhReset = dhagora;
-                    pessoasTask = ChamadasServicosPessoas(new DateTime(2000,1,1,1,1,1), dhagora);
-                    chequesTask = ChamadasServicosCheques(new DateTime(2000, 1, 1, 1, 1, 1), dhagora);
-                    duplicatasTask = ChamadasServicosDuplicadas(new DateTime(2000, 1, 1, 1, 1, 1), dhagora);
+                    if (!Resetou)
+                    {
+                        Resetou = servConfiguracoes.ResetBancoDados(CodigoCliente);
+
+                        configuracoes = await Task.Run(() => servConfiguracoes.ConfiguracoesCliente(this.CodigoCliente));
+                    }
                 }
                 else
                 {
-                     pessoasTask = ChamadasServicosPessoas(configuracoes.DataHoraPessoas.Value, dhagora);
-                     chequesTask = ChamadasServicosCheques(configuracoes.DataHoraCheques.Value, dhagora);
-                     duplicatasTask = ChamadasServicosDuplicadas(configuracoes.DataHoraDuplicatas.Value, dhagora);
+                    Resetou = false;                    
                 }
 
-                Application.DoEvents();
-                await Task.WhenAll(pessoasTask, chequesTask, duplicatasTask);
+                dhAgora = DateTime.Now.AddMinutes(-5);
+
+                Task pessoasTask;
+                Task chequesTask;
+                Task duplicatasTask;
+
+                pessoasTask = ChamadasServicosPessoas(configuracoes.DataHoraPessoas.Value, dhAgora);
+                await Task.WhenAll(pessoasTask);
+
+                chequesTask = ChamadasServicosCheques(configuracoes.DataHoraCheques.Value, dhAgora);
+                await Task.WhenAll(chequesTask);
+
+                duplicatasTask = ChamadasServicosDuplicadas(configuracoes.DataHoraDuplicatas.Value, dhAgora);
+                await Task.WhenAll(duplicatasTask);
+
+                servConfiguracoes.UpdateDhExecucao(CodigoCliente, dhAgora);
             }
             
             catch (Exception ex)
@@ -244,6 +257,7 @@ namespace Scire.JTV.SynchronizeDB
                 timer1.Interval = TempoMinutos * 60 * 1000;
                 timer1.Enabled = true;
                 timer1.Start();
+                StopServico = false;
                 Application.DoEvents();
             }
         }
@@ -257,8 +271,7 @@ namespace Scire.JTV.SynchronizeDB
                 Invoke(new Action(() => {
                     lblPessoas.Text = Mensa1;
                     pictureBox1.Visible = true;
-                    this.Update();
-                    Application.DoEvents();
+                    this.Update();                    
                 }));
 
                 int Resultadofinal = 0;
@@ -268,19 +281,23 @@ namespace Scire.JTV.SynchronizeDB
                     dhAlteracao = servPessoa.GetDataMinima();
                 }
 
+                if (StopServico)
+                    return;
+
                 // processo unico da empresas
                 int retEmpresas = await servPessoa.ImportarEmpresas(CodigoCliente);
-
-                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
+                
+                DateTime dhbase = dhAlteracao.Date;
+                while (dhbase <= dhAtual)
                 {
+                    if (StopServico)
+                        break;
+
                     servPessoa = new PessoaService(FireConnection, MyConnection);
                     
                     DateTime dhini, dhfin;
 
-                    if (dhbase.Date < dhAlteracao)
-                        dhini = dhAlteracao;
-                    else
-                        dhini = dhbase.Date;
+                    dhini = dhbase;
 
                     TimeSpan diff = dhAtual - dhbase;
 
@@ -301,8 +318,6 @@ namespace Scire.JTV.SynchronizeDB
 
                     Task<int> pessoasTelefonesTask = servPessoa.ImportarPessoasTelefones(dhini, dhfin, CodigoCliente);
                                         
-
-                    Application.DoEvents();
                     await Task.WhenAll(pessoasTask, pessoasClientesTask, pessoasFisicasTask
                         , pessoasJuridicasTask, pessoasReferenciasTask, pessoasTelefonesTask);
 
@@ -314,19 +329,24 @@ namespace Scire.JTV.SynchronizeDB
                     int resultado6 = pessoasTelefonesTask.Result;
 
                     Resultadofinal += resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6;
-
-                    if ((resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6) > 0)
-                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servPessoa.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Pessoa);
-
-
+    
                     Invoke(new Action(() =>
                     {
                         lblPessoas.Text = string.Format("Pessoas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy")
                             , resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6);
                         this.Refresh();
-                        Application.DoEvents();
+                        
                     }));
-                   
+
+                    if ((resultado1 + resultado2 + resultado3 + resultado4 + resultado5 + resultado6) > 0)
+                    {
+                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servPessoa.DhAtualizar.AddMilliseconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Pessoa);
+                        dhbase = servPessoa.DhAtualizar;
+                    }
+                    else
+                    {
+                        dhbase = dhbase.Date.AddDays(1);  // Incrementa a data em um dia
+                    }
                 }
 
                 Mensa1 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
@@ -336,7 +356,7 @@ namespace Scire.JTV.SynchronizeDB
                 {
                     lblPessoas.Text = Mensa1;
                     this.Update();
-                    Application.DoEvents();
+                    
                 }));
             }
             catch (Exception ex)
@@ -365,7 +385,7 @@ namespace Scire.JTV.SynchronizeDB
                     lblCheques.Text = Mensa2;
                     pictureBox2.Visible = true;
                     this.Update();
-                    Application.DoEvents();
+                    
                 }));
 
 
@@ -376,16 +396,17 @@ namespace Scire.JTV.SynchronizeDB
 
                 int Resultadofinal = 0;
 
-                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
+                DateTime dhbase = dhAlteracao.Date;
+                while (dhbase <= dhAtual)
                 {
+                    if (StopServico)
+                        break;
+
                     servCheque = new ChequesService(FireConnection, MyConnection);
                     
                     DateTime dhini, dhfin;
 
-                    if (dhbase.Date < dhAlteracao)
-                        dhini = dhAlteracao;
-                    else
-                        dhini = dhbase.Date;
+                    dhini = dhbase;
 
                     TimeSpan diff = dhAtual - dhbase;
 
@@ -399,8 +420,7 @@ namespace Scire.JTV.SynchronizeDB
                     Task<int> chequesbaixasTask = servCheque.ImportarChequesBaixas(dhini, dhfin, CodigoCliente);
 
                     Task<int> chequesdevolvidosTask = servCheque.ImportarChequesDevolvidos(dhini, dhfin, CodigoCliente);
-
-                    Application.DoEvents();
+                                        
                     await Task.WhenAll(chequesTask, chequesbaixasTask, chequesdevolvidosTask);
 
                     int resultado1 = chequesTask.Result;
@@ -408,17 +428,24 @@ namespace Scire.JTV.SynchronizeDB
                     int resultado3 = chequesdevolvidosTask.Result;
 
                     Resultadofinal += resultado1 + resultado2 + resultado3;
-
-                    if ((resultado1 + resultado2+resultado3) > 0)
-                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servCheque.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Cheques);
-
+    
                     Invoke(new Action(() =>
                     {
                         lblCheques.Text = string.Format("Cheques - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado1 + resultado2 + resultado3);
                         this.Refresh();
-                        Application.DoEvents();
-                    }));                                       
-                  
+                        
+                    }));
+
+                    if ((resultado1 + resultado2 + resultado3) > 0)
+                    {
+                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servCheque.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Cheques);
+                        dhbase = servCheque.DhAtualizar;
+                    }
+                    else
+                    {
+                        dhbase = dhbase.Date.AddDays(1);  // Incrementa a data em um dia
+                    }
+
                 }
                 Mensa2 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
                           + (Resultadofinal).ToString();
@@ -466,16 +493,17 @@ namespace Scire.JTV.SynchronizeDB
 
                 int Resultadofinal = 0;
 
-                for (DateTime dhbase = dhAlteracao; dhbase <= dhAtual; dhbase = dhbase.AddDays(1))
+                DateTime dhbase = dhAlteracao.Date;
+                while (dhbase <= dhAtual)
                 {
+                    if (StopServico)
+                        break;
+
                     servDuplicata = new DuplicatasService(FireConnection, MyConnection);
 
                     DateTime dhini, dhfin;
-
-                    if (dhbase.Date < dhAlteracao)
-                        dhini = dhAlteracao;
-                    else
-                        dhini = dhbase.Date;
+                                       
+                    dhini = dhbase;
 
                     TimeSpan diff = dhAtual - dhbase;
 
@@ -486,19 +514,17 @@ namespace Scire.JTV.SynchronizeDB
 
 
                     Task<int> duplicataTask = servDuplicata.ImportarDuplicatas(dhini, dhfin, CodigoCliente);
+                                        
+                    await Task.WhenAll(duplicataTask);
 
                     Task<int> duplicatabaixasTask = servDuplicata.ImportarDuplicatasBaixas(dhini, dhfin, CodigoCliente);
 
-                    Application.DoEvents();
-                    await Task.WhenAll(duplicataTask, duplicatabaixasTask);
+                    await Task.WhenAll(duplicatabaixasTask);
 
                     int resultado1 = duplicataTask.Result;
                     int resultado2 = duplicatabaixasTask.Result;
                     Resultadofinal += resultado1 + resultado2;
-
-                    if ((resultado1 + resultado2) > 0)
-                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servDuplicata.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Duplicatas);
-
+                                        
                     Invoke(new Action(() =>
                     {
                         lblDuplicatas.Text = string.Format("Duplicatas - Data: {0} - Registros: {1}", dhini.ToString("dd/MM/yyyy"), resultado1);
@@ -506,6 +532,16 @@ namespace Scire.JTV.SynchronizeDB
                         this.Refresh();
                         
                     }));
+
+                    if ((resultado1 + resultado2 ) > 0)
+                    {
+                        servConfiguracoes.UpdateDhAlteracao(CodigoCliente, servDuplicata.DhAtualizar.AddSeconds(1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Duplicatas);
+                        dhbase = servDuplicata.DhAtualizar;
+                    }
+                    else
+                    {
+                        dhbase = dhbase.Date.AddDays(1);  // Incrementa a data em um dia
+                    }
                 }
 
                 Mensa3 += " Fim: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "  Registros: "
@@ -543,7 +579,7 @@ namespace Scire.JTV.SynchronizeDB
         {
             timer1.Stop();
             timer1.Enabled = false;
-
+            this.StopServico = true;
 
             frmConfiguracoes configuracoesForm = new frmConfiguracoes();
 
@@ -559,6 +595,8 @@ namespace Scire.JTV.SynchronizeDB
             // Verifica se o formulário foi fechado pelo botão "Salvar" (ou qualquer outro critério desejado)
             if (result == DialogResult.OK)
             {
+                this.StopServico = false;
+                timer1.Interval = 1000; // Intervalo de 1 segundo                
                 Testarconexoes();
 
                 servPessoa = new PessoaService(FireConnection, MyConnection);

@@ -24,6 +24,9 @@ namespace Scire.JTV.Domain.Entities
         [Column("dhduplicatas")]
         public DateTime? DataHoraDuplicatas { get; set; }
 
+        [Column("datahora_importacao")]
+        public DateTime? DataHoraImportacao { get; set; }
+
         [Column("codigo_emp")]
         public int? CodigoEmpresa { get; set; }
 

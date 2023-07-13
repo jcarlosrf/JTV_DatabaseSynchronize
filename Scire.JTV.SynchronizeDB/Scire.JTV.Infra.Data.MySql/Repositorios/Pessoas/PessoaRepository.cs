@@ -6,12 +6,12 @@ using Scire.JTV.Domain.Entities;
 namespace Scire.JTV.Infra.Data.MySql
 {
     public class PessoaRepository : AbstractRepository
-    {   
-        public PessoaRepository(string  connecitonString)
+    {
+        public PessoaRepository(string connecitonString)
         {
-            CreateConnection(connecitonString);            
+            CreateConnection(connecitonString);
         }
-        
+
         public int SavePessoas(List<Pessoa> Pessoas)
         {
             int retorno = 0;
@@ -19,7 +19,7 @@ namespace Scire.JTV.Infra.Data.MySql
             using (MySqlConnection connection = new MySqlConnection(MyConnection))
             {
                 connection.Open();
-               
+
                 try
                 {
                     using (_context = new ScireDbContext(connection, false))
@@ -30,10 +30,10 @@ namespace Scire.JTV.Infra.Data.MySql
                         }
 
                         retorno = _context.SaveChanges();
-                    }                    
+                    }
                 }
                 catch
-                {                    
+                {
                     throw;
                 }
             }
@@ -64,7 +64,6 @@ namespace Scire.JTV.Infra.Data.MySql
                 return _context.SaveChanges();
             else
                 return 1;
-        }
+        }        
     }
-
 }

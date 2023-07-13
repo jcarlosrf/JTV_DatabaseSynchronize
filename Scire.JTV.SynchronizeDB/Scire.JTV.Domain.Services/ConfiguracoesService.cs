@@ -33,6 +33,29 @@ namespace Scire.JTV.Domain.Services
             return retorno > 0;
         }
 
+        public bool UpdateDhExecucao(int codigoCliente, DateTime DhAtualizacao)
+        {
+            clienteRepository = new Infra.Data.MySql.EmpresaImportacaoRepository(MyString);
+            var retorno = clienteRepository.UpdateDataHoraExecucao(codigoCliente, DhAtualizacao);
+            return retorno > 0;
+        }
 
+        public bool ResetBancoDados(int CodigoCliente)
+        {
+            var alterou = 
+                this.UpdateDhAlteracao(CodigoCliente, new DateTime(2000, 1, 1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Pessoa)
+                && this.UpdateDhAlteracao(CodigoCliente, new DateTime(2000, 1, 1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Cheques)
+                && this.UpdateDhAlteracao(CodigoCliente, new DateTime(2000, 1, 1), Infra.Data.MySql.EmpresaImportacaoRepository.Servico.Duplicatas);
+
+            if (alterou)
+            {
+                clienteRepository = new Infra.Data.MySql.EmpresaImportacaoRepository(MyString);
+                var retorno = clienteRepository.DeleteALL(CodigoCliente);
+
+                return retorno > 0;
+            }
+
+            return false;
+        }
     }
 }

@@ -55,10 +55,10 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM Cheque " +
-                    "WHERE (DATAHORAALTERACAO_CHE >= @DataAtualizacao and DATAHORAALTERACAO_CHE < @DataAgora) ";
-                query += "or (DATAHORAALTERACAO_CHE  is Null AND (DATAHORAINCLUSAO_CHE >= @DataAtualizacao and DATAHORAINCLUSAO_CHE < @DataAgora)) ";
-
+                string query = "SELECT FIRST 500  * FROM Cheque " +
+                    "WHERE ((DATAHORAALTERACAO_CHE >= @DataAtualizacao and DATAHORAALTERACAO_CHE < @DataAgora) ";
+                query += "or (DATAHORAALTERACAO_CHE  is Null AND (DATAHORAINCLUSAO_CHE >= @DataAtualizacao and DATAHORAINCLUSAO_CHE < @DataAgora))) ";
+                query += "and TIPO_CHE = 0 ";
                 query += "order by DATAHORAINCLUSAO_CHE, DATAHORAALTERACAO_CHE";
 
                 using (FbCommand command = new FbCommand(query, connection))
@@ -87,9 +87,10 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM CHEQUE_BAIXAS " +
-                    "WHERE (DATAHORAINCLUSAO_CHEBX >= @DataAtualizacao and DATAHORAINCLUSAO_CHEBX < @DataAgora) ";                    
+                string query = "SELECT FIRST 500  * FROM CHEQUE_BAIXAS " +
+                    "WHERE (DATAHORAINCLUSAO_CHEBX >= @DataAtualizacao and DATAHORAINCLUSAO_CHEBX < @DataAgora) ";
 
+                query += "and exists (select AUTOINC_CHE from CHEQUE where AUTOINC_CHE = CHEQUE_CHEBX and TIPO_CHE = 0) ";
                 query += "order by DATAHORAINCLUSAO_CHEBX";
 
                 using (FbCommand command = new FbCommand(query, connection))
@@ -118,9 +119,10 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM CHEQUE_DEVOLVIDO " +
-                    "WHERE (DATAHORAALTERACAO_CHEDEV >= @DataAtualizacao and DATAHORAALTERACAO_CHEDEV < @DataAgora) ";
-                query += "or (DATAHORAALTERACAO_CHEDEV  is Null AND (DATAHORAINCLUSAO_CHEDEV >= @DataAtualizacao and DATAHORAINCLUSAO_CHEDEV  < @DataAgora)) ";
+                string query = "SELECT FIRST 500  * FROM CHEQUE_DEVOLVIDO " +
+                    "WHERE ((DATAHORAALTERACAO_CHEDEV >= @DataAtualizacao and DATAHORAALTERACAO_CHEDEV < @DataAgora) ";
+                query += "or (DATAHORAALTERACAO_CHEDEV  is Null AND (DATAHORAINCLUSAO_CHEDEV >= @DataAtualizacao and DATAHORAINCLUSAO_CHEDEV  < @DataAgora))) ";
+                query += "and exists (select AUTOINC_CHE from CHEQUE where AUTOINC_CHE = CHEQUE_CHEDEV and TIPO_CHE = 0) ";
 
                 query += "order by DATAHORAINCLUSAO_CHEDEV , DATAHORAALTERACAO_CHEDEV";
 

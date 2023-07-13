@@ -55,7 +55,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM PESSOA " +
+                string query = "SELECT FIRST 500 * FROM PESSOA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA < @DataAgora) ";
 
                 query += "or (DATAHORAALTERACAO_PESSOA  is Null and DATAHORAINCLUSAO_PESSOA >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA < @DataAgora) ";
@@ -88,7 +88,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM PESSOA_CLIENTE " +
+                string query = "SELECT FIRST 500 * FROM PESSOA_CLIENTE " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_CLI >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_CLI < @DataAgora) ";
                
                query += "or (DATAHORAALTERACAO_PESSOA_CLI  is Null AND  (DATAHORAINCLUSAO_PESSOA_CLI >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_CLI < @DataAgora)) ";
@@ -121,7 +121,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM PESSOA_FISICA " +
+                string query = "SELECT FIRST 500 * FROM PESSOA_FISICA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_FIS >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_FIS < @DataAgora) ";
 
                 query += "or (DATAHORAALTERACAO_PESSOA_FIS  is Null AND (DATAHORAINCLUSAO_PESSOA_FIS >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_FIS < @DataAgora)) ";
@@ -154,7 +154,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM PESSOA_JURIDICA " +
+                string query = "SELECT FIRST 500 * FROM PESSOA_JURIDICA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_JUR >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_JUR < @DataAgora) ";
 
                     query += "or (DATAHORAALTERACAO_PESSOA_JUR  is Null AND (DATAHORAINCLUSAO_PESSOA_JUR >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_JUR < @DataAgora) ) ";
@@ -187,7 +187,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM PESSOA_REFERENCIA " +
+                string query = "SELECT FIRST 500 * FROM PESSOA_REFERENCIA " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_REF >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_REF < @DataAgora) ";
                                
                     query += "or (DATAHORAALTERACAO_PESSOA_REF  is Null AND (DATAHORAINCLUSAO_PESSOA_REF >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_REF < @DataAgora) ) ";
@@ -220,7 +220,7 @@ namespace Scire.JTV.Infra.Data.Firebird
 
             using (FbConnection connection = new FbConnection(connectionString))
             {
-                string query = "SELECT * FROM PESSOA_TELEFONE " +
+                string query = "SELECT FIRST 500 * FROM PESSOA_TELEFONE " +
                     "WHERE (DATAHORAALTERACAO_PESSOA_TEL >= @DataAtualizacao and DATAHORAALTERACAO_PESSOA_TEL < @DataAgora) ";
 
                 query += "or (DATAHORAALTERACAO_PESSOA_TEL  is Null AND (DATAHORAINCLUSAO_PESSOA_TEL >= @DataAtualizacao and DATAHORAINCLUSAO_PESSOA_TEL < @DataAgora)) ";
