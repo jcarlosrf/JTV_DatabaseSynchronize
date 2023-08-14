@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Scire.JTV.Domain.Services;
+using System.IO;
 
 namespace Scire.JTV.SynchronizeDB
 {
@@ -32,13 +34,26 @@ namespace Scire.JTV.SynchronizeDB
         private bool Resetou { get; set; }
         private bool StopServico { get; set; }
 
+        public string PathLog { get; set; }
+
         #region Eventos do formulário
 
         public frmMain()
         {
             InitializeComponent();
-            
-            InitializeComponent();
+
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+
+            PathLog = Path.Combine(path, "Log");
+
+            if (!Directory.Exists(PathLog))
+                Directory.CreateDirectory(PathLog);
+
+
+            // Exibe a versão na janela ou faz o que desejar
+            this.Text = $"Sincronizar Banco de Dados - Versão : {version}";
+
             timer1 = new Timer();
             timer1.Interval = 1000; // Intervalo de 1 segundo
             timer1.Enabled = false;
@@ -132,7 +147,8 @@ namespace Scire.JTV.SynchronizeDB
 
             Application.DoEvents();
             PessoaService servPessoa1 = new PessoaService(FireConnection, MyConnection);
-
+            lblErro.Text = "";
+            
             if (this.CodigoCliente <= 0 || this.TempoMinutos <= 0)
             {
                 lblErro.Text = "Configuração inválida. Verfique!";
@@ -248,7 +264,8 @@ namespace Scire.JTV.SynchronizeDB
             {
                 Invoke(new Action(() =>
                 {
-                    lblErro.Text = ex.Message;
+                    Sapiens.Library.Log.LogError log = new Sapiens.Library.Log.LogError(PathLog)
+                    log.Log(ex, true, false);
 
                 }));
             }
@@ -363,7 +380,8 @@ namespace Scire.JTV.SynchronizeDB
             {
                 Invoke(new Action(() =>
                 {
-                    lblErro.Text = ex.Message;
+                    Sapiens.Library.Log.LogError log = new Sapiens.Library.Log.LogError(PathLog)
+                    log.Log(ex, true, false);
                 }));
             }
             finally
@@ -459,7 +477,8 @@ namespace Scire.JTV.SynchronizeDB
             {
                 Invoke(new Action(() =>
                 {
-                    lblErro.Text = ex.Message;
+                    Sapiens.Library.Log.LogError log = new Sapiens.Library.Log.LogError(PathLog)
+                    log.Log(ex, true, false);
 
                 }));
             }
@@ -558,7 +577,8 @@ namespace Scire.JTV.SynchronizeDB
             {
                 Invoke(new Action(() =>
                 {
-                    lblErro.Text = ex.Message;
+                    Sapiens.Library.Log.LogError log = new Sapiens.Library.Log.LogError(PathLog)
+                    log.Log(ex, true, false);
 
                 }));
             }

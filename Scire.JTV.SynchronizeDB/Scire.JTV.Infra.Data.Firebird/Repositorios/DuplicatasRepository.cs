@@ -93,7 +93,7 @@ namespace Scire.JTV.Infra.Data.Firebird
                     "WHERE ((DATAHORAALTERACAO_DUPBX >= @DataAtualizacao and DATAHORAALTERACAO_DUPBX < @DataAgora) ";
                 
                 query += "or (DATAHORAALTERACAO_DUPBX  is Null AND (DATAHORAINCLUSAO_DUPBX >= @DataAtualizacao and DATAHORAINCLUSAO_DUPBX  < @DataAgora))) ";
-                query += "and exists (select AUTOINC_DUP from DUPLICATA where DUPLICATA_DUPBX = AUTOINC_DUP and TIPO_DUP = 1) ";
+                //query += "and exists (select AUTOINC_DUP from DUPLICATA where DUPLICATA_DUPBX = AUTOINC_DUP and TIPO_DUP = 1) ";
                 query += "order by DATAHORAINCLUSAO_DUPBX , DATAHORAALTERACAO_DUPBX";
 
                 using (FbCommand command = new FbCommand(query, connection))
